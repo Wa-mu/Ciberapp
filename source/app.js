@@ -132,7 +132,7 @@ function handleClick(event){let b=event.target.closest('button');if(!b||b.disabl
  if(b.hasAttribute('data-lesson-prev')){S.lesson=clamp(S.lesson-1,0,lessons.length-1);render();return}
  if(b.hasAttribute('data-lesson-next')){S.lesson=clamp(S.lesson+1,0,lessons.length-1);render();return}
  if(b.id==='menu-toggle'){let opening=!$('#sidebar').classList.contains('open');$('#sidebar').classList.toggle('open',opening);b.setAttribute('aria-expanded',String(opening));return}
- if(b.id==='theme-toggle'){progress.theme=progress.theme==='dark'?'light':'dark';document.body.dataset.theme=progress.theme;save();return}
+ if(b.id==='theme-toggle'){applyTheme(progress.theme==='dark'?'light':'dark');save();return}
  if(b.id==='copy-output'){if(S.simulation)doCopy(S.simulation.text);return}
  if(b.id==='sim-example'){S.simStore[S.cipher]={...defaults[S.cipher]};S.simulation=null;render();return}
  if(b.id==='sim-swap'){if(!S.simulation){toast('Run the current cipher first to get an output.');return}S.simStore[S.cipher].text=S.simulation.text;S.mode=S.mode==='encrypt'?'decrypt':'encrypt';S.simulation=null;render();return}
@@ -169,4 +169,16 @@ document.addEventListener('change',e=>{if(['rsa-p','rsa-q'].includes(e.target.id
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='mission-answer'&&!S.mission?.answered){e.preventDefault();$('#check-mission')?.click()}if((e.key===' '||e.key==='Enter')&&e.target.classList?.contains('flash-card')){e.preventDefault();e.target.click()}});
 function selfTest(){const checks=[['Caesar encrypt',shiftCipher('HELLO',3,false).text==='KHOOR'],['Caesar decrypt',shiftCipher('KHOOR',3,true).text==='HELLO'],['Vernam A1',pairedLetters('CAT','DOG','vernam',false).text==='GPA'],['Vernam decryption',pairedLetters('GPA','DOG','vernam',true).text==='CAT'],['Vigenere classic',pairedLetters('ATTACKATDAWN','LEMON','vigenere',false).text==='LXFOPVEFRNHR'],['Vigenere decrypt',pairedLetters('LXFOPVEFRNHR','LEMON','vigenere',true).text==='ATTACKATDAWN'],['Columnar demo',columnarCipher('CATDOG',3,false).text==='CDAOTG'],['Columnar reverse',columnarCipher('CDAOTG',3,true).text==='CATDOG'],['XOR CAT V',xorCipher('CAT','V',false).text==='15 17 02'],['XOR reverse',xorCipher('15 17 02','V',true).text==='CAT'],['Atbash',atbash('HELLO').text==='SVOOL'],['Mono reverse',monoCipher(monoCipher('HELLO','QWERTYUIOPASDFGHJKLZXCVBNM',false).text,'QWERTYUIOPASDFGHJKLZXCVBNM',true).text==='HELLO'],['Rail roundtrip',railCipher(railCipher('HELLOWORLD',3,false).text,3,true).text==='HELLOWORLD'],['RSA roundtrip',rsaCipher(rsaCipher('CAT',11,13,false).text,11,13,true).text==='CAT']];return checks}
 window.CipherLabTest={selfTest,simulate,shiftCipher,columnarCipher,pairedLetters,xorCipher,railCipher,rsaCipher,monoCipher,atbash};
-document.body.dataset.theme=progress.theme==='light'?'light':'dark';render();
+function applyTheme(theme){
+ const light=theme==='light';
+ progress.theme=light?'light':'dark';
+ document.documentElement.dataset.theme=progress.theme;
+ document.body.dataset.theme=progress.theme;
+ document.querySelector('meta[name="theme-color"]').content=light?'#f4f7fb':'#0c1220';
+ const toggle=$('#theme-toggle');
+ const label=light?'Switch to dark mode':'Switch to light mode';
+ toggle.setAttribute('aria-label',label);
+ toggle.title=label;
+ toggle.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${light?'<path d="M20.9 13a9 9 0 0 1-9.9-9.9A9 9 0 1 0 20.9 13Z"/>':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42m0-14.14-1.42 1.42M6.35 17.65l-1.42 1.42"/>'}</svg>`;
+}
+applyTheme(progress.theme);render();

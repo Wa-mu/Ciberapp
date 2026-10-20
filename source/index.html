@@ -3,9 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1222">
+  <meta name="theme-color" content="#0c1220">
   <meta name="description" content="Cryptography training laboratory for INTE 401: hands-on ciphers, practice missions, mock exam, flashcards and cryptanalysis.">
   <title>CipherLab — INTE 401 Cryptography Trainer</title>
+  <script>
+    // Apply the saved theme before the first paint.
+    try {
+      const saved = JSON.parse(localStorage.getItem('cipherlab-progress-v1') || '{}');
+      const theme = saved?.theme === 'light' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = theme;
+      document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#f4f7fb' : '#0c1220';
+    } catch {
+      document.documentElement.dataset.theme = 'dark';
+    }
+  </script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-theme="dark">

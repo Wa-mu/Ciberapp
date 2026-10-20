@@ -58,8 +58,8 @@ cd Ciberapp
 ```
 
 Open [`source/index.html`](source/index.html) in a modern browser. Keep `index.html`,
-`styles.css`, and `app.js` together in the `source` folder. The downloaded app can
-run locally without an internet connection.
+`styles.css`, `app.js`, and the bundled `fonts` folder together in `source`. The
+downloaded app can run locally without an internet connection.
 
 A suggested study session:
 
@@ -97,6 +97,7 @@ CipherLab/
 │   ├── index.html    Application shell and navigation
 │   ├── styles.css    Layout, responsive styles, and themes
 │   ├── app.js        Study content, ciphers, training modes, and saved progress
+│   ├── fonts/        Local interface and monospace fonts, with their licenses
 │   └── README.md     Additional study-source notes
 ├── .gitignore
 ├── README.md
@@ -122,3 +123,10 @@ CipherLabTest.selfTest()
 ```
 
 Each result contains a check name and a boolean; every boolean should be `true`.
+
+## Typography
+
+CipherLab uses [Inter](https://github.com/rsms/inter) for interface text and
+[JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) for cipher input,
+output, and calculations. Fonts are bundled locally for offline use. Their SIL
+Open Font License notices are included in [`source/fonts`](source/fonts).

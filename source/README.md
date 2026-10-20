@@ -5,7 +5,7 @@ A standalone, interactive study app based on the PUP CCIS **Information Assuranc
 ## Launch
 
 1. Download or clone the repository.
-2. Open `source/index.html` in Chrome, Edge, Firefox, or another modern desktop/mobile browser. Keep `styles.css` and `app.js` in the same folder as `index.html`.
+2. Open `source/index.html` in Chrome, Edge, Firefox, or another modern desktop/mobile browser. Keep `styles.css`, `app.js`, and the `fonts` folder alongside `index.html`.
 3. No installation, accounts, server, or internet connection is required.
 
 For a hosted version, follow the [Vercel deployment instructions](../README.md#deploy-to-vercel).
@@ -31,8 +31,9 @@ The uploaded module uses the alphabet positions A=1 through Z=26 for its Vernam 
 - `index.html`: application shell and page metadata
 - `styles.css`: responsive visual design and color themes
 - `app.js`: lesson data, cipher algorithms, training modes, quizzes, event handling and self-tests
+- `fonts/`: bundled Inter and JetBrains Mono webfonts, with their license notices
 
-If customizing the source, keep these three files in the same folder and open `index.html`.
+If customizing the source, keep these files and the `fonts` folder together and open `index.html`.
 
 ## Tests performed
 
