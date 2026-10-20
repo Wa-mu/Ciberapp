@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1222">
+  <meta name="description" content="Cryptography training laboratory for INTE 401: hands-on ciphers, practice missions, mock exam, flashcards and cryptanalysis.">
+  <title>CipherLab — INTE 401 Cryptography Trainer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="dark">
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-symbol" aria-hidden="true">⌘</div><div><strong>CIPHER<span>LAB</span></strong><small>INTE 401 · STUDY SYSTEM</small></div></div>
+    <div class="nav-caption">TRAINING STATION</div>
+    <nav class="main-nav" id="primary-nav" aria-label="Main navigation">
+      <button class="nav-item selected" data-route="home"><span class="nav-icon">▦</span><span>Dashboard</span></button>
+      <button class="nav-item" data-route="learn"><span class="nav-icon">◈</span><span>Learn the concepts</span></button>
+      <button class="nav-item" data-route="lab"><span class="nav-icon">⌘</span><span>Cipher simulator</span></button>
+      <button class="nav-item" data-route="missions"><span class="nav-icon">◎</span><span>Practice missions</span></button>
+      <button class="nav-item" data-route="exam"><span class="nav-icon">◫</span><span>Mock examination</span></button>
+      <button class="nav-item" data-route="flashcards"><span class="nav-icon">▤</span><span>Flashcards</span></button>
+      <button class="nav-item" data-route="analysis"><span class="nav-icon">⌁</span><span>Cryptanalysis lab</span><span class="tiny-bonus">BONUS</span></button>
+      <button class="nav-item" data-route="reference"><span class="nav-icon">≡</span><span>Quick reference</span></button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="mini-progress"><div class="mini-progress-title"><span>COURSE PROGRESS</span><b id="side-progress-label">0%</b></div><div class="progress-track"><span id="side-progress-bar" style="width:0%"></span></div><small id="side-progress-sub">0 of 9 lessons completed</small></div>
+      <div class="sidebar-source">Based on your PUP INTE 401 instructional material, Module 3, with clearly labeled bonus material.</div>
+    </div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="top-left"><button id="menu-toggle" class="icon-btn menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button><span class="breadcrumb"><span>INTE 401</span><span class="bread-sep">/</span><strong id="crumb">Dashboard</strong></span></div>
+      <div class="top-actions"><span class="live-pill"><span class="live-dot"></span> OFFLINE READY</span><span class="xp-pill" title="Experience points">✦ <b id="top-xp">0</b> XP</span><button id="theme-toggle" class="icon-btn" aria-label="Toggle light or dark appearance" title="Toggle theme">☼</button></div>
+    </header>
+    <main id="main-content" tabindex="-1" aria-live="polite"></main>
+    <footer class="footer">CIPHERLAB · BUILT FOR EXAM PRACTICE <span>Classical ciphers are educational demonstrations, not modern secure encryption.</span></footer>
+  </div>
+</div>
+<div id="toast-container" aria-live="polite" class="toaster"></div>
+<script src="app.js"></script>
+</body>
+</html>

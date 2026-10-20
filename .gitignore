@@ -1,0 +1,13 @@
+# Local Vercel project settings and credentials
+.vercel/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Optional local tooling
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
