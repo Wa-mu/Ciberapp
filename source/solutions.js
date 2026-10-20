@@ -36,6 +36,7 @@
       "BONUS · Additional mirrored-alphabet demonstration; not covered in the supplied reviewer",
     rail: "BONUS · Additional transposition demonstration; not covered in the supplied reviewer",
     rsa: "BONUS · Additional toy RSA demonstration; not covered in the supplied reviewer",
+    playfair: "BONUS · Playfair extension, not covered in the supplied reviewer; rules checked against PBS NOVA’s The Playfair Cipher",
   };
 
   function build({ kind, input, key, mode, options = {}, result }) {
@@ -171,6 +172,61 @@
         solution.notes.push(
           "A true one-time pad also needs uniformly random, independent, secret key material that is never reused. Matching the message length alone does not make an arbitrary pad secure.",
         );
+      finish();
+    }
+    if (kind === "playfair") {
+      solution.formula = decrypt
+        ? "Same row: LEFT; same column: UP; rectangle: exchange columns"
+        : "Same row: RIGHT; same column: DOWN; rectangle: exchange columns";
+      solution.legend = "Use a 5×5 square with I/J combined. Coordinates below are (row, column), numbered 1–5.";
+      step(
+        "Build the keyword square",
+        `Uppercase the keyword, merge J into I and remove repeated letters in order. Fill the remaining cells with unused letters A–Z, omitting J. Normalized keyword: ${preview(result.keyword)}.`,
+      );
+      solution.grid = {
+        caption: "Playfair 5×5 key square (I also represents J)",
+        columns: ["Row / column", 1, 2, 3, 4, 5],
+        rows: result.grid.map((row, index) => [index + 1, ...row]),
+      };
+      const pairs = result.prepared.match(/../g) || [];
+      step(
+        decrypt ? "Read the ciphertext in pairs" : "Prepare the plaintext pairs",
+        decrypt
+          ? "Remove spaces and punctuation, then read consecutive pairs without inserting any letters. Ciphertext must have even length, use I rather than J, and contain different letters within each pair."
+          : "Keep A–Z letters, uppercase them and replace J with I. Read two letters at a time. If they match, insert X after the first and reconsider the second. Pad an unpaired final letter. Use Q when a filler follows X, so no pair contains two identical letters.",
+        `Normalized input: ${preview(result.normalized)}${nl}Pairs: ${preview(pairs.join(" "))}`,
+      );
+      if (result.fillers.length) {
+        step(
+          "Track the inserted fillers",
+          `${result.fillers.length} filler letter(s) were inserted. Positions refer to the prepared plaintext, after earlier insertions. These letters will remain visible after decryption.`,
+          null,
+          {
+            caption: "Inserted Playfair fillers",
+            columns: ["Prepared position", "Filler", "Reason"],
+            rows: result.fillers.map((item) => [item.position, item.letter, item.reason]),
+          },
+        );
+      }
+      step(
+        "Apply the rule for each pair",
+        `For letters in the same row, move ${decrypt ? "left" : "right"} one cell, wrapping at the edge. For letters in the same column, move ${decrypt ? "up" : "down"} one cell with wraparound. Otherwise use the other corners of the rectangle: keep each letter’s row and take its partner’s column.`,
+      );
+      const first = trace[0];
+      if (first) step(
+        `Work the first pair: ${first.input}`,
+        `${first.positions}. Apply the ${first.rule.toLowerCase()} rule to obtain ${first.output}.`,
+        `${first.input} → ${first.output}`,
+      );
+      solution.table = {
+        caption: "Transform every Playfair pair",
+        columns: ["Pair #", "Input pair", "Square positions", "Rule", "Output pair"],
+        rows: trace.map((row) => [row.index, row.input, row.positions, row.rule, row.output]),
+      };
+      solution.notes.push(
+        "Decryption returns prepared plaintext, including inserted X/Q fillers. Decide whether to remove them using the message context; genuine X or Q letters must not be deleted automatically.",
+        "Spaces, punctuation, case and the original I/J distinction are not recoverable from this ciphertext. This X/Q filler convention must match between sender and receiver.",
+      );
       finish();
     }
     if (kind === "mono" || kind === "atbash") {
@@ -574,7 +630,7 @@
       if (solution.table.rows.length > 32)
         calculations += `<details class="solution-more"><summary>Show the remaining ${solution.table.rows.length - 32} calculations (${solution.table.rows.length} total)</summary>${tableHtml(solution.table, solution.table.rows.slice(32))}</details>`;
     }
-    return `<div class="solution-guide"><div class="solution-rule"><span class="solution-label">${escape(solution.operation)} rule</span><pre class="solution-math">${escape(solution.formula)}</pre><p>${escape(solution.legend)}</p></div><ol class="solution-steps">${steps}</ol>${solution.grid ? tableHtml(solution.grid) : ""}${calculations}<div class="solution-notes">${solution.notes.map((note) => `<p>${escape(note)}</p>`).join("")}</div><p class="solution-source">${escape(solution.source)}. References use page numbers in the supplied INTE 401 reviewer PDF.</p></div>`;
+    return `<div class="solution-guide"><div class="solution-rule"><span class="solution-label">${escape(solution.operation)} rule</span><pre class="solution-math">${escape(solution.formula)}</pre><p>${escape(solution.legend)}</p></div><ol class="solution-steps">${steps}</ol>${solution.grid ? tableHtml(solution.grid) : ""}${calculations}<div class="solution-notes">${solution.notes.map((note) => `<p>${escape(note)}</p>`).join("")}</div><p class="solution-source">${escape(solution.source)}. Reviewer page references use the supplied INTE 401 reviewer PDF.</p></div>`;
   }
   global.CipherLabSolutions = Object.freeze({ build, render });
 })(window);

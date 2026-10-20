@@ -113,3 +113,21 @@ test('invalid numerical cipher keys produce useful errors instead of broken calc
     assert.throws(() => read(`simulate('rail','CAT','','encrypt',{rails:${value}})`), /whole number of rails/);
   }
 });
+
+test('Playfair missions grade prepared plaintext, including required fillers', () => {
+  const { read } = app();
+  for (const encrypt of [true, false]) {
+    const mission = plain(read(`(() => {
+      S.missionDifficulty='hard';
+      const original=Math.random,values=[0.999,${encrypt ? 0 : 0.999},0,0];
+      try{Math.random=()=>values.shift()??0;return generateMission()}
+      finally{Math.random=original}
+    })()`));
+    assert.equal(mission.type, 'playfair');
+    assert.equal(mission.encrypt, encrypt);
+    const result = plain(read(`simulate('playfair',${JSON.stringify(mission.src)},${JSON.stringify(mission.key)},'${encrypt ? 'encrypt' : 'decrypt'}')`));
+    assert.equal(mission.target, result.text);
+    assert.match(read(`missionDescription(${JSON.stringify(mission)})`), /keep all filler letters/);
+  }
+  assert.ok(read("Q.filter(item=>/Playfair/.test(item.q)).every(item=>item.tag==='BONUS')"));
+});

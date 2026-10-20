@@ -11,17 +11,17 @@ No account, installation, or backend is required.
 
 ## Features
 
-- **Guided lessons:** 17 lessons covering access control, firewalls, remote access,
+- **Guided lessons:** 18 lessons covering access control, firewalls, remote access,
   security controls, IDPS, honeypots, scanning tools, biometrics and cryptography,
   with supplemental cryptography lessons clearly labeled.
-- **Cipher simulator:** Encrypt and decrypt messages with nine cipher methods,
+- **Cipher simulator:** Encrypt and decrypt messages with ten cipher methods,
   then follow numbered solutions with key alignment, intermediate arithmetic,
   wraparound examples, transposition grids, byte operations, and toy RSA key math.
 - **Practice missions:** Generate sets of 5, 10, or 20 challenges with difficulty
   settings, hints, and answer feedback.
-- **Mock examination:** Take randomized quizzes from a 62-question bank, filter by
+- **Mock examination:** Take randomized quizzes from a 66-question bank, filter by
   subject or core coverage, and review explanations with source notes.
-- **Flashcards:** Review 44 definition and formula cards, and mark cards as mastered.
+- **Flashcards:** Review 48 definition and formula cards, and mark cards as mastered.
 - **Cryptanalysis lab:** Explore letter frequencies and all 26 Caesar shifts.
 - **Progress tracking:** Earn XP and track lesson completion, answer accuracy,
   exam statistics, and flashcard mastery.
@@ -39,6 +39,7 @@ No account, installation, or backend is required.
 | XOR bytes | Combine message and key bytes and inspect the binary steps | Core |
 | Columnar transposition | Rearrange letters in a column grid | Bonus demonstration |
 | Vigenère | Apply a repeating keyword using A=0 through Z=25 | Bonus worked method |
+| Playfair | Transform letter pairs using a keyword-based 5×5 square | Bonus |
 | Rail fence | Rearrange letters along a zigzag pattern | Bonus |
 | Atbash | Substitute letters using a mirrored alphabet | Bonus |
 | Toy RSA | Explore public/private key arithmetic with small primes | Bonus |
@@ -68,6 +69,22 @@ A suggested study session:
 2. Open the **Cipher simulator**, load an example, and follow its worked steps.
 3. Test your understanding with **Practice missions** and a **Mock examination**.
 4. Use **Flashcards** and **Quick reference** to review unfamiliar topics.
+
+## Playfair convention
+
+Select **Cipher simulator → Playfair**. Enter a keyword and a message, then encrypt
+or decrypt to see the 5×5 square, prepared pairs, filler insertions and every pair's
+transformation. Playfair is BONUS material outside the supplied INTE 401 reviewer.
+
+The square combines I/J. Plaintext is uppercased and formatting is removed. Repeated
+letters in a pair and an odd final letter receive an X filler; Q is used after X.
+Decryption returns prepared plaintext with fillers retained, because automatically
+removing X/Q could erase genuine letters. Hard practice missions use the same rule.
+
+Rules were checked against [PBS NOVA's Playfair instructions](https://www.pbs.org/wgbh/nova/decoding/playfair.html).
+The Q fallback after X and retaining fillers are explicit app conventions. Regression
+checks include a published example, every ordered pair of distinct square letters,
+and repeated-letter and malformed-input cases.
 
 ## Progress and privacy
 
@@ -123,7 +140,7 @@ node --check source/solutions.js
 node --test tests/*.test.cjs
 ```
 
-To run the 14 built-in cipher checks, open the app's browser developer console and
+To run the 16 built-in cipher checks, open the app's browser developer console and
 execute:
 
 ```js

@@ -12,12 +12,12 @@ For a hosted version, follow the [Vercel deployment instructions](../README.md#d
 
 ## What's inside
 
-- 17 lessons with section/page references to the supplied reviewer: access control, firewalls, remote access, controls, IDPS, honeypots, scanning, biometrics and cryptography
-- Cipher simulator: Caesar, substitution, columnar transposition, Vernam, Vigenère, XOR, plus Atbash, rail fence and toy RSA
+- 18 lessons with section/page references to the supplied reviewer: access control, firewalls, remote access, controls, IDPS, honeypots, scanning, biometrics and cryptography
+- Cipher simulator: Caesar, substitution, columnar transposition, Vernam, Vigenère, XOR, Playfair, plus Atbash, rail fence and toy RSA
 - Encrypt/decrypt with numbered explanations, key alignment, worked arithmetic, wraparound examples, and labeled grids
 - Generated practice missions (5, 10, or 20 questions)
-- Mock exam with 62 sourced questions, topic filters and a core-only study option
-- 44 flashcards and recognition-based Caesar cryptanalysis
+- Mock exam with 66 sourced questions, topic filters and a core-only study option
+- 48 flashcards and recognition-based Caesar cryptanalysis
 - Points, course progress, and exam history saved in your browser
 - Quick-reference sheet and JSON progress export
 - Desktop and mobile layouts, plus dark/light modes
@@ -45,9 +45,25 @@ If customizing the source, keep these files and the `fonts` folder together and 
 
 - Run `node --test tests/*.test.cjs` from the repository root for cipher regressions, reviewer coverage, filters, progress compatibility and input validation.
 - GitHub Actions runs these checks on pushes and pull requests.
-- The browser also exposes 14 cipher self-checks through `CipherLabTest.selfTest()`.
+- The browser also exposes 16 cipher self-checks through `CipherLabTest.selfTest()`.
 - Tested the major simulator flows in headless Chromium.
 - Tested mock exam, mission feedback, flashcards, lesson progress and mobile navigation.
+
+## Playfair convention
+
+Select **Cipher simulator → Playfair**. Enter a keyword and a message, then encrypt
+or decrypt to see the 5×5 square, prepared pairs, filler insertions and every pair's
+transformation. Playfair is BONUS material outside the supplied INTE 401 reviewer.
+
+The square combines I/J. Plaintext is uppercased and formatting is removed. Repeated
+letters in a pair and an odd final letter receive an X filler; Q is used after X.
+Decryption returns prepared plaintext with fillers retained, because automatically
+removing X/Q could erase genuine letters. Hard practice missions use the same rule.
+
+Rules were checked against [PBS NOVA's Playfair instructions](https://www.pbs.org/wgbh/nova/decoding/playfair.html).
+The Q fallback after X and retaining fillers are explicit app conventions. Regression
+checks include a published example, every ordered pair of distinct square letters,
+and repeated-letter and malformed-input cases.
 
 ## Progress and privacy
 
