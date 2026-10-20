@@ -1697,6 +1697,30 @@ select.field option {
   }
 }
 /* Keep reference formulas and column headings within narrow screens. */
+.reference-topics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 24px;
+}
+.reference-topics article {
+  min-width: 0;
+}
+.reference-topics h4 {
+  margin: 8px 0 12px;
+}
+.reference-topics .codebox {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.notice {
+  overflow-wrap: anywhere;
+}
+.steps {
+  flex-wrap: wrap;
+}
+.step-dot {
+  min-width: 8px;
+}
 .ref-table {
   overflow-wrap: anywhere;
 }

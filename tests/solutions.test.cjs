@@ -8,6 +8,7 @@ const source = (name) =>
   fs.readFileSync(path.join(__dirname, "..", "source", name), "utf8");
 const context = vm.createContext({ TextEncoder, TextDecoder });
 context.window = context;
+vm.runInContext(source("reviewer.js"), context);
 vm.runInContext(source("solutions.js"), context);
 // Load the calculation layer without starting the browser interface.
 vm.runInContext(source("app.js").split(/const\s+types\s*=/)[0], context);

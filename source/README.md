@@ -1,30 +1,32 @@
-# CipherLab — INTE 401 Cryptography Trainer
+# CipherLab — INTE 401 Security Study Companion
 
-A standalone, interactive study app based on the PUP CCIS **Information Assurance and Security 2** instructional material, with clearly marked bonus demonstrations.
+A standalone study app based on the supplied **INTE 401 Information Assurance and Security 2 reviewer**, covering Modules 1–3 with clearly marked bonus material.
 
 ## Launch
 
 1. Download or clone the repository.
-2. Open `source/index.html` in Chrome, Edge, Firefox, or another modern desktop/mobile browser. Keep `styles.css`, `app.js`, `solutions.js`, and the `fonts` folder alongside `index.html`.
+2. Open `source/index.html` in Chrome, Edge, Firefox, or another modern desktop/mobile browser. Keep `styles.css`, `reviewer.js`, `app.js`, `solutions.js`, and the `fonts` folder alongside `index.html`.
 3. No installation, accounts, server, or internet connection is required.
 
 For a hosted version, follow the [Vercel deployment instructions](../README.md#deploy-to-vercel).
 
 ## What's inside
 
-- Guided lessons, sourced to printed module pages
+- 17 lessons with section/page references to the supplied reviewer: access control, firewalls, remote access, controls, IDPS, honeypots, scanning, biometrics and cryptography
 - Cipher simulator: Caesar, substitution, columnar transposition, Vernam, Vigenère, XOR, plus Atbash, rail fence and toy RSA
 - Encrypt/decrypt with numbered explanations, key alignment, worked arithmetic, wraparound examples, and labeled grids
 - Generated practice missions (5, 10, or 20 questions)
-- Mock exam with a 28-question bank and explanation feedback
-- Flashcards and recognition-based Caesar cryptanalysis
+- Mock exam with 62 sourced questions, topic filters and a core-only study option
+- 44 flashcards and recognition-based Caesar cryptanalysis
 - Points, course progress, and exam history saved in your browser
 - Quick-reference sheet and JSON progress export
 - Desktop and mobile layouts, plus dark/light modes
 
 ## Study-source details
 
-The uploaded module uses the alphabet positions A=1 through Z=26 for its Vernam worked example. The Vigenère worked method in this app uses A=0 through Z=25 and is explicitly marked BONUS because the uploaded material identifies Vigenère but does not explain the complete worked algorithm. The columnar, Atbash, rail fence, toy RSA and automated cryptanalysis features are also bonus teaching extensions. Classical ciphers should not be used to protect sensitive real-world information.
+The content source is `INTE_401_Information_Assurance_Security_2_Reviewer.pdf` in the supplied `IAS2 IM` folder. Page references use this 16-page reviewer, not the underlying module's printed pagination. The unrelated COMP 023 document is excluded, and the source PDFs are not bundled.
+
+The reviewer uses A=1 through Z=26 for its Vernam example. It labels the A=0 Vigenère worked example as BONUS, along with theoretical-model depth and control-function taxonomy. Later asymmetric, PKI and broader attack details remain supplemental. Additional byte, columnar, Atbash, rail-fence, toy-RSA and automated-analysis features are marked as demonstrations or bonus practice.
 
 Expanded simulator solutions reference the supplied `INTE_401_Information_Assurance_Security_2_Reviewer.pdf`, sections 10–13, pages 9–11. Source notes identify reviewer-aligned rules and additional demonstrations. The same explanations appear after answering practice missions.
 
@@ -32,7 +34,8 @@ Expanded simulator solutions reference the supplied `INTE_401_Information_Assura
 
 - `index.html`: application shell and page metadata
 - `styles.css`: responsive visual design and color themes
-- `app.js`: lesson data, cipher algorithms, training modes, quizzes, event handling and self-tests
+- `reviewer.js`: reviewer topic map, eight security lessons, additional questions and flashcards
+- `app.js`: cipher algorithms, training modes, quizzes, event handling, saved progress and self-tests
 - `solutions.js`: input-specific worked explanations, source notes and solution tables
 - `fonts/`: bundled Inter and JetBrains Mono webfonts, with their license notices
 
@@ -40,7 +43,9 @@ If customizing the source, keep these files and the `fonts` folder together and 
 
 ## Tests performed
 
-- Built-in 14-algorithm-example test suite passed.
+- Run `node --test tests/*.test.cjs` from the repository root for cipher regressions, reviewer coverage, filters, progress compatibility and input validation.
+- GitHub Actions runs these checks on pushes and pull requests.
+- The browser also exposes 14 cipher self-checks through `CipherLabTest.selfTest()`.
 - Tested the major simulator flows in headless Chromium.
 - Tested mock exam, mission feedback, flashcards, lesson progress and mobile navigation.
 

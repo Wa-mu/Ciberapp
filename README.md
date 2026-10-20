@@ -1,27 +1,27 @@
 # CipherLab
 
-**An interactive cryptography study companion for INTE 401 — Information Assurance and Security 2.**
+**An interactive study companion for INTE 401 — Information Assurance and Security 2.**
 
-CipherLab helps students understand cryptographic concepts through guided lessons,
-hands-on cipher experiments, and exam practice. Its study content draws on the PUP
-CCIS instructional material, with **CORE** and **BONUS** labels distinguishing course
-material from additional demonstrations.
+CipherLab covers the supplied INTE 401 reviewer through guided lessons, hands-on
+cipher experiments, and exam practice. **CORE** and **BONUS** labels distinguish
+reviewer coverage from supplemental concepts and demonstrations.
 
 The application runs entirely in your browser using HTML, CSS, and JavaScript.
 No account, installation, or backend is required.
 
 ## Features
 
-- **Guided lessons:** Nine lessons covering cryptography fundamentals, classical
-  ciphers, XOR, symmetric and asymmetric encryption, hashing, PKI, and cryptanalysis.
+- **Guided lessons:** 17 lessons covering access control, firewalls, remote access,
+  security controls, IDPS, honeypots, scanning tools, biometrics and cryptography,
+  with supplemental cryptography lessons clearly labeled.
 - **Cipher simulator:** Encrypt and decrypt messages with nine cipher methods,
   then follow numbered solutions with key alignment, intermediate arithmetic,
   wraparound examples, transposition grids, byte operations, and toy RSA key math.
 - **Practice missions:** Generate sets of 5, 10, or 20 challenges with difficulty
   settings, hints, and answer feedback.
-- **Mock examination:** Take randomized quizzes from a 28-question bank, with
-  explanations and a review of your answers.
-- **Flashcards:** Practice definitions and formulas, and mark cards as mastered.
+- **Mock examination:** Take randomized quizzes from a 62-question bank, filter by
+  subject or core coverage, and review explanations with source notes.
+- **Flashcards:** Review 44 definition and formula cards, and mark cards as mastered.
 - **Cryptanalysis lab:** Explore letter frequencies and all 26 Caesar shifts.
 - **Progress tracking:** Earn XP and track lesson completion, answer accuracy,
   exam statistics, and flashcard mastery.
@@ -59,7 +59,7 @@ cd Ciberapp
 ```
 
 Open [`source/index.html`](source/index.html) in a modern browser. Keep `index.html`,
-`styles.css`, `app.js`, `solutions.js`, and the bundled `fonts` folder together in
+`styles.css`, `reviewer.js`, `app.js`, `solutions.js`, and the bundled `fonts` folder together in
 `source`. The downloaded app can run locally without an internet connection.
 
 A suggested study session:
@@ -97,12 +97,14 @@ CipherLab/
 ├── source/
 │   ├── index.html    Application shell and navigation
 │   ├── styles.css    Layout, responsive styles, and themes
-│   ├── app.js        Study content, ciphers, training modes, and saved progress
+│   ├── reviewer.js   Reviewer topics, lessons, questions and additional flashcards
+│   ├── app.js        Ciphers, training modes, and saved progress
 │   ├── solutions.js  Input-specific explanations and worked solution rendering
 │   ├── fonts/        Local interface and monospace fonts, with their licenses
 │   └── README.md     Additional study-source notes
 ├── .gitignore
-├── tests/           Cipher and solution regression checks
+├── tests/           Cipher, reviewer coverage and study behavior checks
+├── .github/         Automated checks for pushes and pull requests
 ├── README.md
 └── vercel.json       Vercel deployment configuration
 ```
@@ -115,9 +117,10 @@ framework dependencies or bundling steps.
 If Node.js is installed, check JavaScript syntax with:
 
 ```sh
+node --check source/reviewer.js
 node --check source/app.js
 node --check source/solutions.js
-node --test tests/solutions.test.cjs
+node --test tests/*.test.cjs
 ```
 
 To run the 14 built-in cipher checks, open the app's browser developer console and
@@ -129,11 +132,20 @@ CipherLabTest.selfTest()
 
 Each result contains a check name and a boolean; every boolean should be `true`.
 
-Simulator source notes refer to sections 10–13 (pages 9–11) of
-`INTE_401_Information_Assurance_Security_2_Reviewer.pdf`. They distinguish the
+The content reference is `INTE_401_Information_Assurance_Security_2_Reviewer.pdf`
+from the supplied `IAS2 IM` folder. Lessons and quiz explanations cite sections
+1–13 of this 16-page reviewer. It covers PUP Modules 1–3; later asymmetric-system,
+PKI and attack details remain supplemental. The unrelated COMP 023 reviewer is
+not part of this app. The PDFs are not redistributed with the application.
+
+Simulator source notes refer to sections 10–13 (pages 9–11). They distinguish the
 reviewer's examples from additional demonstrations. The course Vernam method
 uses A=1; Vigenère uses A=0. Long calculation tables show 32 rows initially, with
 the remaining calculations available in an expandable section.
+
+GitHub Actions runs syntax and regression checks on every push and pull request.
+Existing lesson completion and the original flashcard mastery positions are retained
+when updating; new lessons increase the total used for course progress.
 
 ## Typography
 
