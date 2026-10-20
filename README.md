@@ -15,7 +15,8 @@ No account, installation, or backend is required.
 - **Guided lessons:** Nine lessons covering cryptography fundamentals, classical
   ciphers, XOR, symmetric and asymmetric encryption, hashing, PKI, and cryptanalysis.
 - **Cipher simulator:** Encrypt and decrypt messages with nine cipher methods,
-  then inspect calculation tables, transposition grids, or binary operations.
+  then follow numbered solutions with key alignment, intermediate arithmetic,
+  wraparound examples, transposition grids, byte operations, and toy RSA key math.
 - **Practice missions:** Generate sets of 5, 10, or 20 challenges with difficulty
   settings, hints, and answer feedback.
 - **Mock examination:** Take randomized quizzes from a 28-question bank, with
@@ -58,8 +59,8 @@ cd Ciberapp
 ```
 
 Open [`source/index.html`](source/index.html) in a modern browser. Keep `index.html`,
-`styles.css`, `app.js`, and the bundled `fonts` folder together in `source`. The
-downloaded app can run locally without an internet connection.
+`styles.css`, `app.js`, `solutions.js`, and the bundled `fonts` folder together in
+`source`. The downloaded app can run locally without an internet connection.
 
 A suggested study session:
 
@@ -97,9 +98,11 @@ CipherLab/
 │   ├── index.html    Application shell and navigation
 │   ├── styles.css    Layout, responsive styles, and themes
 │   ├── app.js        Study content, ciphers, training modes, and saved progress
+│   ├── solutions.js  Input-specific explanations and worked solution rendering
 │   ├── fonts/        Local interface and monospace fonts, with their licenses
 │   └── README.md     Additional study-source notes
 ├── .gitignore
+├── tests/           Cipher and solution regression checks
 ├── README.md
 └── vercel.json       Vercel deployment configuration
 ```
@@ -113,6 +116,8 @@ If Node.js is installed, check JavaScript syntax with:
 
 ```sh
 node --check source/app.js
+node --check source/solutions.js
+node --test tests/solutions.test.cjs
 ```
 
 To run the 14 built-in cipher checks, open the app's browser developer console and
@@ -123,6 +128,12 @@ CipherLabTest.selfTest()
 ```
 
 Each result contains a check name and a boolean; every boolean should be `true`.
+
+Simulator source notes refer to sections 10–13 (pages 9–11) of
+`INTE_401_Information_Assurance_Security_2_Reviewer.pdf`. They distinguish the
+reviewer's examples from additional demonstrations. The course Vernam method
+uses A=1; Vigenère uses A=0. Long calculation tables show 32 rows initially, with
+the remaining calculations available in an expandable section.
 
 ## Typography
 
