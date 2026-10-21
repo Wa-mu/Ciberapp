@@ -886,6 +886,131 @@ textarea.field {
   grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
   align-items: start;
 }
+.cipher-explanation-trigger {
+  margin-bottom: 18px;
+}
+html:has(#cipher-explanation[open]) {
+  overflow: hidden;
+}
+.cipher-explanation {
+  width: min(800px, calc(100% - 32px));
+  max-width: none;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.cipher-explanation[open] {
+  display: flex;
+  flex-direction: column;
+}
+.cipher-explanation::backdrop {
+  background: #030817b3;
+}
+.cipher-explanation-header,
+.cipher-explanation-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 18px clamp(16px, 4vw, 28px);
+}
+.cipher-explanation-header {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.cipher-explanation-header h2 {
+  margin: 4px 0 0;
+  font-size: clamp(18px, 4vw, 23px);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.cipher-explanation-header .btn {
+  flex-shrink: 0;
+}
+.cipher-explanation-footer {
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+}
+.cipher-explanation-content {
+  min-height: 0;
+  padding: 24px clamp(16px, 4vw, 28px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.cipher-explanation-content p,
+.cipher-explanation-steps {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.cipher-explanation-content section {
+  margin: 24px 0;
+}
+.cipher-explanation-content h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.cipher-explanation-content p {
+  margin: 8px 0 0;
+}
+.cipher-explanation-steps {
+  margin: 0;
+  padding-left: 24px;
+}
+.cipher-explanation-steps li {
+  padding-left: 4px;
+  margin-top: 10px;
+}
+.cipher-explanation-steps li::marker {
+  color: var(--primary);
+  font-weight: 650;
+}
+.cipher-explanation-example {
+  padding: 18px;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.cipher-explanation-example dl {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0;
+}
+.cipher-explanation-example dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+.cipher-explanation-example dd {
+  margin: 3px 0 0;
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+}
+.cipher-explanation-example dl > div:last-child dd {
+  color: var(--primary);
+}
+.cipher-explanation-calculations {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.cipher-explanation-calculations > summary {
+  padding: 8px 0;
+  min-height: 44px;
+  color: var(--primary);
+  cursor: pointer;
+}
+.cipher-explanation-calculations > summary:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
 .solution-guide {
   min-width: 0;
   margin-top: 18px;

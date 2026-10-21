@@ -15,6 +15,7 @@ For a hosted version, follow the [Vercel deployment instructions](../README.md#d
 - 18 lessons with section/page references to the supplied reviewer: access control, firewalls, remote access, controls, IDPS, honeypots, scanning, biometrics and cryptography
 - Cipher simulator: Caesar, substitution, columnar transposition, Vernam, Vigenère, XOR, Playfair, plus Atbash, rail fence and toy RSA
 - Encrypt/decrypt with numbered explanations, key alignment, worked arithmetic, wraparound examples, and labeled grids
+- **Explain this cipher** guides for all ten methods, with key instructions, encryption/decryption steps, worked examples and common mistakes
 - Generated practice missions (5, 10, or 20 questions)
 - Mock exam with 66 sourced questions, topic filters and a core-only study option
 - 48 flashcards and recognition-based Caesar cryptanalysis

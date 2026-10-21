@@ -17,6 +17,8 @@ No account, installation, or backend is required.
 - **Cipher simulator:** Encrypt and decrypt messages with ten cipher methods,
   then follow numbered solutions with key alignment, intermediate arithmetic,
   wraparound examples, transposition grids, byte operations, and toy RSA key math.
+  Each method has an **Explain this cipher** button with a plain-language guide,
+  key instructions, encryption/decryption steps, a worked example and common mistakes.
 - **Practice missions:** Generate sets of 5, 10, or 20 challenges with difficulty
   settings, hints, and answer feedback.
 - **Mock examination:** Take randomized quizzes from a 66-question bank, filter by

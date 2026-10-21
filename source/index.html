@@ -49,6 +49,14 @@
   </div>
 </div>
 <div id="toast-container" aria-live="polite" class="toaster"></div>
+<dialog id="cipher-explanation" class="cipher-explanation" aria-labelledby="cipher-explanation-title" aria-describedby="cipher-explanation-summary">
+  <div class="cipher-explanation-header">
+    <div><div class="eyebrow">CIPHER GUIDE</div><h2 id="cipher-explanation-title"></h2></div>
+    <button type="button" class="btn ghost" data-close-explanation aria-label="Close cipher explanation" autofocus>Close ×</button>
+  </div>
+  <div id="cipher-explanation-content" class="cipher-explanation-content"></div>
+  <div class="cipher-explanation-footer"><button type="button" class="btn secondary" data-close-explanation>Back to simulator</button></div>
+</dialog>
 <script src="reviewer.js"></script>
 <script src="solutions.js"></script>
 <script src="app.js"></script>
