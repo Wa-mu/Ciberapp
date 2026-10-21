@@ -43,10 +43,23 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  transition:
-    background 0.2s,
-    color 0.2s;
   font-size: 15px;
+}
+/* Crossfade the complete theme, including gradients and native form controls. */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+}
+/* Capture the final palette rather than partially transitioned controls. */
+:root.theme-transitioning *,
+:root.theme-transitioning *::before,
+:root.theme-transitioning *::after {
+  transition: none !important;
 }
 button,
 input,
@@ -1853,6 +1866,11 @@ select.field option {
   white-space: normal;
 }
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
   *,
   *::before,
   *::after {
