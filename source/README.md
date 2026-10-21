@@ -16,7 +16,7 @@ For a hosted version, follow the [Vercel deployment instructions](../README.md#d
 - Cipher simulator: Caesar, substitution, columnar transposition, Vernam, Vigenère, XOR, Playfair, plus Atbash, rail fence and toy RSA
 - Encrypt/decrypt with numbered explanations, key alignment, worked arithmetic, wraparound examples, and labeled grids
 - **Explain this cipher** guides for all ten methods, with key instructions, encryption/decryption steps, worked examples and common mistakes
-- Generated practice missions (5, 10, or 20 questions)
+- Generated practice missions (5, 10, or 20 questions), with a selector for all ten simulator ciphers or mixed practice, difficulty settings and cipher-specific hints
 - Mock exam with 66 sourced questions, topic filters and a core-only study option
 - 100 original INTE 401 quiz cards with shuffled choices, topic filters, answer-side explanations and missed-card retries
 - Generated 8-, 16- or 24-question exams for substitution, transposition, Vernam and Vigenère, with editable answers, final grading, worked solutions and a new-exam button

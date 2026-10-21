@@ -19,8 +19,9 @@ No account, installation, or backend is required.
   wraparound examples, transposition grids, byte operations, and toy RSA key math.
   Each method has an **Explain this cipher** button with a plain-language guide,
   key instructions, encryption/decryption steps, a worked example and common mistakes.
-- **Practice missions:** Generate sets of 5, 10, or 20 challenges with difficulty
-  settings, hints, and answer feedback.
+- **Practice missions:** Choose any of the ten simulator ciphers or a mixed set,
+  then generate 5, 10, or 20 challenges with difficulty settings, cipher-specific
+  hints, and answer feedback.
 - **Mock examination:** Take randomized quizzes from a 66-question bank, filter by
   subject or core coverage, and review explanations with source notes.
 - **100-card topic quiz:** Answer original multiple-choice flashcards across the
@@ -81,6 +82,16 @@ A suggested study session:
    **Create a new simulated exam** for another set.
 5. Use **Practice missions** and **Mock examination** for additional practice.
 6. Use **Flashcards** and **Quick reference** to review unfamiliar topics.
+
+## Choose a cipher for practice missions
+
+Open **Practice missions** and use **Cipher to practice** to select Vernam,
+Vigenère, Caesar, substitution, columnar transposition, XOR, Playfair, rail fence,
+Atbash or toy RSA. Every challenge in that set uses the selected method, at any
+difficulty. **Mixed ciphers** retains the difficulty-based rotation. Your cipher,
+difficulty and question count remain selected when returning to setup during the
+same page session. RSA encryption answers are checked as complete integer sequences;
+decryption answers use letters. Existing CORE/BONUS labels and worked solutions remain.
 
 ## August 2026 quiz cards and cipher exams
 

@@ -131,3 +131,80 @@ test('Playfair missions grade prepared plaintext, including required fillers', (
   }
   assert.ok(read("Q.filter(item=>/Playfair/.test(item.q)).every(item=>item.tag==='BONUS')"));
 });
+
+test('each selected mission cipher is honored at every difficulty in both directions', () => {
+  const { read } = app();
+  const methods = plain(read('types.map(type=>type.id)'));
+  assert.equal(methods.length, 10);
+  for (const type of methods) {
+    for (const difficulty of ['easy', 'medium', 'hard', 'mixed']) {
+      for (const encrypt of [true, false]) {
+        const mission = plain(read(`(() => {
+          S.missionCipher=${JSON.stringify(type)}; S.missionDifficulty=${JSON.stringify(difficulty)};
+          const original=Math.random; let call=0;
+          Math.random=()=>call++===${difficulty === 'mixed' ? 1 : 0}?${encrypt ? 0 : 0.75}:0.25;
+          try{return generateMission()}finally{Math.random=original}
+        })()`));
+        assert.equal(mission.type, type);
+        assert.equal(mission.encrypt, encrypt);
+        assert.ok(['easy', 'medium', 'hard'].includes(mission.difficulty));
+        if (difficulty !== 'mixed') assert.equal(mission.difficulty, difficulty);
+        const result = plain(read(`simulate(${JSON.stringify(type)},${JSON.stringify(mission.src)},${JSON.stringify(mission.key)},'${encrypt ? 'encrypt' : 'decrypt'}',${JSON.stringify(mission.opts)})`));
+        assert.equal(read(`answerMatch(${JSON.stringify(type)},${JSON.stringify(mission.target)},${JSON.stringify(result.text)},${encrypt})`), true);
+        assert.ok(read(`missionHint(${JSON.stringify(mission)}).length`) > 30);
+        if (type === 'vernam') assert.equal(mission.key.length, mission.src.replace(/[^A-Z]/g, '').length);
+        if (type === 'mono') assert.equal(new Set(mission.key).size, 26);
+        if (type === 'rsa') {
+          assert.notEqual(mission.opts.p, mission.opts.q);
+          assert.ok(mission.parameters.n > 26);
+          const description = read(`missionDescription(${JSON.stringify(mission)})`);
+          assert.match(description, new RegExp(`n=${mission.parameters.n}`));
+          assert.match(description, encrypt ? /public e=/ : /private d=/);
+        }
+      }
+    }
+  }
+});
+
+test('mixed mission sets retain their difficulty-based rotation', () => {
+  const { read } = app();
+  const allowed = {
+    easy: ['caesar', 'atbash', 'columnar'],
+    medium: ['caesar', 'mono', 'columnar', 'vigenere', 'vernam'],
+    hard: ['caesar', 'columnar', 'vigenere', 'vernam', 'rail', 'xor', 'playfair'],
+  };
+  read("S.missionCipher='mixed'; let missionSeed=17; Math.random=()=>((missionSeed=(missionSeed*1664525+1013904223)>>>0)/4294967296)");
+  for (const difficulty of ['easy', 'medium', 'hard', 'mixed']) {
+    read(`S.missionDifficulty=${JSON.stringify(difficulty)}`);
+    const seen = new Set();
+    for (let i = 0; i < 30; i++) {
+      const mission = plain(read('generateMission()'));
+      assert.ok(allowed[mission.difficulty].includes(mission.type));
+      seen.add(mission.type);
+    }
+    assert.ok(seen.size > 1, `${difficulty} should vary its ciphers`);
+  }
+});
+
+test('mission setup retains selected cipher, difficulty and length', () => {
+  const { read } = app();
+  read("S.missionCipher='vernam'; S.missionDifficulty='hard'; S.missionGoal=20; S.mission=null");
+  const setup = read('renderMissions()');
+  assert.match(setup, /id="mission-cipher"/);
+  assert.match(setup, /value="vernam" selected/);
+  assert.match(setup, /value="hard" selected/);
+  assert.match(setup, /value="20" selected/);
+  for (const method of plain(read('types'))) assert.ok(setup.includes(`value="${method.id}"`));
+});
+
+test('RSA missions compare the complete integer sequence and reject malformed numeric answers', () => {
+  const { read } = app();
+  for (const answer of ['42 29 68', '42,29,68', '042\n029 068']) {
+    assert.equal(read(`answerMatch('rsa',${JSON.stringify(answer)},'42 29 68',true)`), true);
+  }
+  for (const answer of ['', ' ', 'wrong', '99 29 68', '42 29', '42 29 68 10', '422968', '42 x 29 68', '-42 29 68', '42.0 29 68', '42e0 29 68', '9007199254740993 29 68']) {
+    assert.equal(read(`answerMatch('rsa',${JSON.stringify(answer)},'42 29 68',true)`), false, answer);
+  }
+  assert.equal(read("answerMatch('rsa','cat','CAT',false)"), true);
+  assert.equal(read("answerMatch('rsa','DOG','CAT',false)"), false);
+});
