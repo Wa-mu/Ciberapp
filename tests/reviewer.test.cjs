@@ -21,7 +21,7 @@ function app(saved) {
     localStorage: { getItem: () => saved, setItem() {} },
   });
   context.window = context;
-  for (const name of ['reviewer.js', 'solutions.js', 'app.js']) {
+  for (const name of ['reviewer.js', 'solutions.js', 'study-bank.js', 'study.js', 'app.js']) {
     vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'source', name), 'utf8'), context);
   }
   return { context, read: (code) => vm.runInContext(code, context) };

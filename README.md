@@ -23,6 +23,12 @@ No account, installation, or backend is required.
   settings, hints, and answer feedback.
 - **Mock examination:** Take randomized quizzes from a 66-question bank, filter by
   subject or core coverage, and review explanations with source notes.
+- **100-card topic quiz:** Answer original multiple-choice flashcards across the
+  nine pictured INTE 401 topic groups. Flip for explanations, filter by topic,
+  choose 10, 25, 50 or 100 cards, and retry a deck containing only missed cards.
+- **Four-cipher exam:** Generate 8, 16 or 24 written-answer problems covering
+  substitution, transposition, Vernam and Vigenère. Revise answers before submitting,
+  review scores and worked solutions, then create a new exam with fresh messages and keys.
 - **Flashcards:** Review 48 definition and formula cards, and mark cards as mastered.
 - **Cryptanalysis lab:** Explore letter frequencies and all 26 Caesar shifts.
 - **Progress tracking:** Earn XP and track lesson completion, answer accuracy,
@@ -62,15 +68,51 @@ cd Ciberapp
 ```
 
 Open [`source/index.html`](source/index.html) in a modern browser. Keep `index.html`,
-`styles.css`, `reviewer.js`, `app.js`, `solutions.js`, and the bundled `fonts` folder together in
+`styles.css`, `reviewer.js`, `app.js`, `solutions.js`, `study-bank.js`, `study.js`,
+the favicon files, and the bundled `fonts` folder together in
 `source`. The downloaded app can run locally without an internet connection.
 
 A suggested study session:
 
 1. Start with **Learn the concepts** and mark lessons complete as you finish them.
 2. Open the **Cipher simulator**, load an example, and follow its worked steps.
-3. Test your understanding with **Practice missions** and a **Mock examination**.
-4. Use **Flashcards** and **Quick reference** to review unfamiliar topics.
+3. Work through the **100-card topic quiz** and retry your missed cards.
+4. Take a **Four-cipher exam**, inspect the worked solutions, then select
+   **Create a new simulated exam** for another set.
+5. Use **Practice missions** and **Mock examination** for additional practice.
+6. Use **Flashcards** and **Quick reference** to review unfamiliar topics.
+
+## August 2026 quiz cards and cipher exams
+
+The new quiz and four-cipher exam follow the INTE 401 coverage in the supplied image
+and these supplied references:
+
+- `_IM_INTE-401-IASv2026.pdf` — 162-page revised instructional material.
+- `INTE_401_Information_Assurance_Security_2_Reviewer_Aug2026.pdf` — 16-page updated reviewer.
+
+The 100 original quiz cards cover access control (14), firewalls (12), remote
+connections (8), controls (10), IDPS (14), honeypots (8), scanning (10), biometrics
+(10) and cryptography (14). Questions and choices shuffle for each session. The first
+answer is scored; revealing without answering counts as a miss. Correct first
+answers earn 10 XP. A completed deck saves its score; **Retry missed cards** creates
+a fresh deck from that attempt's misses.
+
+Every cipher exam includes equal numbers of the four methods and equal encryption
+and decryption counts within each method. Substitution includes Caesar and supplied
+replacement alphabets. Transposition uses the reviewer's explicitly specified,
+unpadded row-fill/column-read grid. Vernam uses the course's **A=1…Z=26** arithmetic;
+Vigenère uses the added **A=0…Z=25** worked method. Source notes distinguish course
+concepts from added calculations and background details.
+
+Exam answers remain editable until **Submit exam & see results**. Case and spaces
+are ignored; extra symbols are rejected and blanks receive zero. Submission saves
+one score and 15 XP per correct answer, then unlocks a breakdown by cipher and
+worked solutions. **Create a new simulated exam** generates a different set using
+the selected length and difficulty. Active answers stay available when switching
+screens during the same page session; reloading starts a new session. Completed
+scores and existing lesson/flashcard progress remain in browser storage.
+
+The PDFs remain local reference material and are not included in the repository.
 
 ## Playfair convention
 
@@ -119,6 +161,9 @@ CipherLab/
 │   ├── reviewer.js   Reviewer topics, lessons, questions and additional flashcards
 │   ├── app.js        Ciphers, training modes, and saved progress
 │   ├── solutions.js  Input-specific explanations and worked solution rendering
+│   ├── study-bank.js 100 original August 2026 INTE 401 quiz cards
+│   ├── study.js      Card quizzes, generated cipher exams, grading and review
+│   ├── favicon.svg  Vector brand favicon, with favicon.ico as a fallback
 │   ├── fonts/        Local interface and monospace fonts, with their licenses
 │   └── README.md     Additional study-source notes
 ├── .gitignore
@@ -139,6 +184,8 @@ If Node.js is installed, check JavaScript syntax with:
 node --check source/reviewer.js
 node --check source/app.js
 node --check source/solutions.js
+node --check source/study-bank.js
+node --check source/study.js
 node --test tests/*.test.cjs
 ```
 
@@ -151,7 +198,7 @@ CipherLabTest.selfTest()
 
 Each result contains a check name and a boolean; every boolean should be `true`.
 
-The content reference is `INTE_401_Information_Assurance_Security_2_Reviewer.pdf`
+The original lesson and simulator content reference is `INTE_401_Information_Assurance_Security_2_Reviewer.pdf`
 from the supplied `IAS2 IM` folder. Lessons and quiz explanations cite sections
 1–13 of this 16-page reviewer. It covers PUP Modules 1–3; later asymmetric-system,
 PKI and attack details remain supplemental. The unrelated COMP 023 reviewer is

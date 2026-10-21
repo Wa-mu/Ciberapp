@@ -19,6 +19,8 @@ jobs:
         run: |
           node --check source/reviewer.js
           node --check source/solutions.js
+          node --check source/study-bank.js
+          node --check source/study.js
           node --check source/app.js
       - name: Check ciphers, reviewer coverage and study behavior
         run: node --test tests/*.test.cjs

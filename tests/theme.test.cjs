@@ -48,7 +48,7 @@ function app({ saved = '{}', reducedMotion = false, animated = true, blockedStor
   const read = code => vm.runInContext(code, context);
   read(source('index.html').match(/<script>([\s\S]*?)<\/script>/)[1]);
   const initialTheme = document.documentElement.dataset.theme;
-  for (const name of ['reviewer.js', 'solutions.js', 'app.js']) read(source(name));
+  for (const name of ['reviewer.js', 'solutions.js', 'study-bank.js', 'study.js', 'app.js']) read(source(name));
   return {
     document, nodes, classes, transitions, read, initialTheme,
     saved: () => JSON.parse(saved),
