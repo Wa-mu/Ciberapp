@@ -1865,6 +1865,114 @@ select.field option {
 .ref-table th {
   white-space: normal;
 }
+.mission-cipher-picker {
+  position: relative;
+  width: 100%;
+  scroll-margin-top: 96px;
+}
+.mission-cipher-picker > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 46px;
+  padding: 12px 13px;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  background: var(--input);
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+  line-height: 1.5;
+}
+.mission-cipher-picker > summary::-webkit-details-marker {
+  display: none;
+}
+.mission-cipher-picker > summary:hover,
+.mission-cipher-picker[open] > summary {
+  border-color: var(--primary);
+}
+.mission-cipher-picker > summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+.mission-cipher-picker > summary svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  transition: transform 0.16s;
+}
+.mission-cipher-picker[open] > summary svg {
+  transform: rotate(180deg);
+}
+.mission-cipher-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: min(380px, 55vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px;
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+.mission-cipher-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 9px;
+  border-radius: 7px;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.mission-cipher-option:hover,
+.mission-cipher-option:focus-within {
+  background: var(--panel2);
+}
+.mission-cipher-option input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+.mission-cipher-option > span {
+  flex: 1;
+  min-width: 0;
+}
+.mission-cipher-option .pill {
+  flex-shrink: 0;
+  font-size: 9px;
+  padding: 3px 5px;
+}
+.mission-cipher-all {
+  position: sticky;
+  top: -8px;
+  z-index: 1;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  font-weight: 600;
+}
+.mission-cipher-footer {
+  position: sticky;
+  bottom: -8px;
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+}
+.mission-cipher-error {
+  color: var(--danger);
+}
 .study-actions,
 .study-topic-list {
   display: flex;

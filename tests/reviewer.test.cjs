@@ -118,8 +118,8 @@ test('Playfair missions grade prepared plaintext, including required fillers', (
   const { read } = app();
   for (const encrypt of [true, false]) {
     const mission = plain(read(`(() => {
-      S.missionDifficulty='hard';
-      const original=Math.random,values=[0.999,${encrypt ? 0 : 0.999},0,0];
+      S.missionDifficulty='hard'; S.missionCiphers=['playfair']; S.missionCipherQueue=[];
+      const original=Math.random,values=[${encrypt ? 0 : 0.999},0,0];
       try{Math.random=()=>values.shift()??0;return generateMission()}
       finally{Math.random=original}
     })()`));
@@ -140,7 +140,7 @@ test('each selected mission cipher is honored at every difficulty in both direct
     for (const difficulty of ['easy', 'medium', 'hard', 'mixed']) {
       for (const encrypt of [true, false]) {
         const mission = plain(read(`(() => {
-          S.missionCipher=${JSON.stringify(type)}; S.missionDifficulty=${JSON.stringify(difficulty)};
+          S.missionCiphers=[${JSON.stringify(type)}]; S.missionCipherQueue=[]; S.missionDifficulty=${JSON.stringify(difficulty)};
           const original=Math.random; let call=0;
           Math.random=()=>call++===${difficulty === 'mixed' ? 1 : 0}?${encrypt ? 0 : 0.75}:0.25;
           try{return generateMission()}finally{Math.random=original}
@@ -166,35 +166,60 @@ test('each selected mission cipher is honored at every difficulty in both direct
   }
 });
 
-test('mixed mission sets retain their difficulty-based rotation', () => {
+test('checkbox-selected mission sets contain only checked ciphers and balance their counts', () => {
   const { read } = app();
-  const allowed = {
-    easy: ['caesar', 'atbash', 'columnar'],
-    medium: ['caesar', 'mono', 'columnar', 'vigenere', 'vernam'],
-    hard: ['caesar', 'columnar', 'vigenere', 'vernam', 'rail', 'xor', 'playfair'],
-  };
-  read("S.missionCipher='mixed'; let missionSeed=17; Math.random=()=>((missionSeed=(missionSeed*1664525+1013904223)>>>0)/4294967296)");
+  read('let missionSeed=17; Math.random=()=>((missionSeed=(missionSeed*1664525+1013904223)>>>0)/4294967296)');
   for (const difficulty of ['easy', 'medium', 'hard', 'mixed']) {
-    read(`S.missionDifficulty=${JSON.stringify(difficulty)}`);
-    const seen = new Set();
-    for (let i = 0; i < 30; i++) {
-      const mission = plain(read('generateMission()'));
-      assert.ok(allowed[mission.difficulty].includes(mission.type));
-      seen.add(mission.type);
+    for (const selection of [['vernam', 'vigenere'], ['mono', 'columnar', 'playfair'], plain(read('types.map(type=>type.id)'))]) {
+      read(`S.missionDifficulty=${JSON.stringify(difficulty)}; S.missionCiphers=${JSON.stringify(selection)}; S.missionCipherQueue=[]`);
+      const counts = new Map(selection.map(id => [id, 0]));
+      for (let i = 0; i < 20; i++) {
+        const mission = plain(read('generateMission()'));
+        assert.ok(selection.includes(mission.type));
+        counts.set(mission.type, counts.get(mission.type) + 1);
+      }
+      assert.ok(Math.max(...counts.values()) - Math.min(...counts.values()) <= 1);
     }
-    assert.ok(seen.size > 1, `${difficulty} should vary its ciphers`);
   }
 });
 
-test('mission setup retains selected cipher, difficulty and length', () => {
+test('mission setup renders a checkbox dropdown and retains all checked ciphers', () => {
   const { read } = app();
-  read("S.missionCipher='vernam'; S.missionDifficulty='hard'; S.missionGoal=20; S.mission=null");
+  read("S.missionCiphers=['vernam','vigenere']; S.missionDifficulty='hard'; S.missionGoal=20; S.mission=null");
   const setup = read('renderMissions()');
-  assert.match(setup, /id="mission-cipher"/);
-  assert.match(setup, /value="vernam" selected/);
+  assert.match(setup, /<details class="mission-cipher-picker"/);
+  assert.match(setup, /type="checkbox" data-mission-cipher id="mission-cipher-vernam" value="vernam" checked/);
+  assert.match(setup, /type="checkbox" data-mission-cipher id="mission-cipher-vigenere" value="vigenere" checked/);
+  assert.doesNotMatch(setup, /value="caesar" checked/);
+  assert.match(read('missionCipherSummary()'), /Vernam.*Vigenère/);
   assert.match(setup, /value="hard" selected/);
   assert.match(setup, /value="20" selected/);
   for (const method of plain(read('types'))) assert.ok(setup.includes(`value="${method.id}"`));
+});
+
+test('select all, clear, and individual checkboxes update the mission pool without duplicates', () => {
+  const { read } = app();
+  read("setMissionCipherChecked('all',false)");
+  assert.deepEqual(plain(read('selectedMissionCiphers()')), []);
+  assert.throws(() => read('generateMission()'), /Check at least one cipher/);
+  assert.match(read('renderMissions()'), /id="begin-mission" disabled/);
+  read("setMissionCipherChecked('vernam',true); setMissionCipherChecked('vigenere',true); setMissionCipherChecked('vernam',true)");
+  assert.deepEqual(plain(read('selectedMissionCiphers()')), ['vernam', 'vigenere']);
+  read("setMissionCipherChecked('vernam',false)");
+  assert.deepEqual(plain(read('selectedMissionCiphers()')), ['vigenere']);
+  read("setMissionCipherChecked('all',true)");
+  assert.equal(read('selectedMissionCiphers().length'), 10);
+  assert.equal(read('missionCipherSummary()'), 'All ciphers (10)');
+});
+
+test('changing checked ciphers clears any queued missions from the earlier selection', () => {
+  const { read } = app();
+  read("S.missionCiphers=['caesar','vernam']; S.missionCipherQueue=['caesar']; setMissionCipherChecked('caesar',false)");
+  assert.deepEqual(plain(read('S.missionCipherQueue')), []);
+  assert.equal(read('generateMission().type'), 'vernam');
+  read("S.missionCiphers=['unknown','vernam','vernam']; S.missionCipherQueue=[]");
+  assert.deepEqual(plain(read('selectedMissionCiphers()')), ['vernam']);
+  assert.equal(read('generateMission().type'), 'vernam');
 });
 
 test('RSA missions compare the complete integer sequence and reject malformed numeric answers', () => {

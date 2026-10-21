@@ -19,7 +19,7 @@ No account, installation, or backend is required.
   wraparound examples, transposition grids, byte operations, and toy RSA key math.
   Each method has an **Explain this cipher** button with a plain-language guide,
   key instructions, encryption/decryption steps, a worked example and common mistakes.
-- **Practice missions:** Choose any of the ten simulator ciphers or a mixed set,
+- **Practice missions:** Check any combination of the ten simulator ciphers in a dropdown,
   then generate 5, 10, or 20 challenges with difficulty settings, cipher-specific
   hints, and answer feedback.
 - **Mock examination:** Take randomized quizzes from a 66-question bank, filter by
@@ -83,15 +83,20 @@ A suggested study session:
 5. Use **Practice missions** and **Mock examination** for additional practice.
 6. Use **Flashcards** and **Quick reference** to review unfamiliar topics.
 
-## Choose a cipher for practice missions
+## Choose ciphers for practice missions
 
-Open **Practice missions** and use **Cipher to practice** to select Vernam,
-Vigenère, Caesar, substitution, columnar transposition, XOR, Playfair, rail fence,
-Atbash or toy RSA. Every challenge in that set uses the selected method, at any
-difficulty. **Mixed ciphers** retains the difficulty-based rotation. Your cipher,
-difficulty and question count remain selected when returning to setup during the
-same page session. RSA encryption answers are checked as complete integer sequences;
-decryption answers use letters. Existing CORE/BONUS labels and worked solutions remain.
+Open **Practice missions → Ciphers to practice** to open the checkbox dropdown.
+Check one or more methods, such as Vernam and Vigenère together. **Select all ciphers**
+checks or clears the full list; all ten start checked. Close with **Done**, Escape,
+or a click outside the dropdown. At least one checkbox must be checked to begin.
+
+Every challenge uses a checked cipher, at any difficulty. Sets cycle through the
+checked methods in shuffled order, keeping their question counts as even as possible.
+Checking just Vernam produces an entirely Vernam set; checking Vernam and Vigenère
+mixes those two. Your checked choices, difficulty and question count remain selected
+when returning to setup during the same page session. RSA encryption answers are
+checked as complete integer sequences; decryption answers use letters. Existing
+CORE/BONUS labels and worked solutions remain.
 
 ## August 2026 quiz cards and cipher exams
 
