@@ -75,27 +75,50 @@ test("reviewer Vigenere example and key alignment skip nonletters", () => {
   assert.equal(formatted.solution.steps[1].table.rows[1][1], "LEMONL");
 });
 
-test("columnar solutions explain both complete and incomplete grids", () => {
-  assert.equal(
-    simulate("columnar", "CATDOG", "", "encrypt", { cols: 3 }).text,
-    "CDAOTG",
-  );
-  const encrypted = simulate("columnar", "CATDO", "", "encrypt", { cols: 3 });
-  assert.equal(encrypted.text, "CDAOT");
-  const decrypted = simulate("columnar", "CDAOT", "", "decrypt", { cols: 3 });
-  assert.equal(decrypted.text, "CATDO");
-  assert.deepEqual(plain(decrypted.solution.steps[2].table.rows), [
-    [1, 2, "CD"],
-    [2, 2, "AO"],
-    [3, 1, "T"],
-  ]);
-  assert.match(decrypted.solution.steps[1].text, /leftmost 2 column/);
-  assert.deepEqual(plain(decrypted.solution.grid.rows[1]), [2, "D", "O", "·"]);
-  const short = simulate("columnar", "CAT", "", "decrypt", { cols: 5 });
-  assert.deepEqual(
-    plain(short.solution.steps[2].table.rows.map((row) => row[1])),
-    [1, 1, 1, 0, 0],
-  );
+test("PDF transposition uses the published arrows and right-to-left numbering", () => {
+  const key = '4 8 1 5 7 2 6 3';
+  const encrypted = simulate('transposition', 'ABCD EFGH', key, 'encrypt');
+  assert.equal(encrypted.text, 'GDBEHACF');
+  assert.equal(simulate('transposition', encrypted.text, key, 'decrypt').text, 'ABCDEFGH');
+  assert.match(encrypted.solution.source, /Unit III, PDF p\. 107/);
+  assert.match(encrypted.solution.legend, /Position 1 is the rightmost/);
+  assert.deepEqual(plain(encrypted.solution.table.rows[0]), [1, 'H', 1, 4]);
+  const decrypted = simulate('transposition', 'GDBEHACF', key, 'decrypt');
+  assert.deepEqual(plain(decrypted.solution.table.rows[0]), [1, 'H', 4, 1]);
+  assert.deepEqual(plain(decrypted.solution.grid.rows), [[1, 'GDBEHACF', 'ABCDEFGH']]);
+  const custom = simulate('transposition', 'HGFEDCBA', '8 7 6 5 4 3 2 1', 'decrypt');
+  assert.equal(custom.text, 'ABCDEFGH');
+  assert.match(custom.solution.steps[1].text, /1→8 becomes 8→1/);
+  // Each one-bit input independently verifies every source → destination arrow.
+  for (const [index, destination] of [4, 8, 1, 5, 7, 2, 6, 3].entries()) {
+    const input = (1 << index).toString(2).padStart(8, '0');
+    const expected = (1 << (destination - 1)).toString(2).padStart(8, '0');
+    assert.equal(simulate('transposition', input, key, 'encrypt').text, expected);
+    assert.equal(simulate('transposition', expected, key, 'decrypt').text, input);
+  }
+});
+
+test('transposition reverses every binary byte and independent blocks without deleting explicit padding', () => {
+  const key = '4,8,1,5,7,2,6,3';
+  for (let byte = 0; byte < 256; byte++) {
+    const input = byte.toString(2).padStart(8, '0');
+    const encrypted = simulate('transposition', input, key, 'encrypt').text;
+    assert.equal(simulate('transposition', encrypted, key, 'decrypt').text, input);
+    assert.equal([...encrypted].filter(bit => bit === '1').length, [...input].filter(bit => bit === '1').length);
+  }
+  const encrypted = simulate('transposition', 'ABCDEFGHCATXXXXX', key, 'encrypt');
+  assert.equal(encrypted.text.slice(0, 8), 'GDBEHACF');
+  assert.equal(simulate('transposition', encrypted.text, key, 'decrypt').text, 'ABCDEFGHCATXXXXX');
+  assert.equal(encrypted.trace.length, 16);
+});
+
+test('transposition rejects malformed permutations, mixed symbols and incomplete blocks', () => {
+  for (const key of ['', '1 1 2 3 4 5 6 7', '1 2 3', '0 1 2 3 4 5 6 7', '1 2 3 4 5 6 7 9', '1 2 3 4 5 6 7 8.0', '12345678']) {
+    assert.throws(() => simulate('transposition', 'ABCDEFGH', key, 'encrypt'), /each destination 1–8 exactly once/);
+  }
+  for (const input of ['CAT', '12345678', 'ABCD0101', 'ABCDEFG!', '']) {
+    assert.throws(() => simulate('transposition', input, '4 8 1 5 7 2 6 3', 'encrypt'), /complete 8-symbol blocks|A–Z letters or binary/);
+  }
 });
 
 test("substitution decryption looks in the key row and Atbash is its own inverse", () => {
@@ -197,9 +220,9 @@ test("rendered explanations escape user text and distinguish source material", (
   const html = context.CipherLabSolutions.render(result.solution);
   assert.doesNotMatch(html, /<img/);
   assert.match(html, /&lt;img/);
-  assert.match(result.solution.source, /Reviewer §10, page 9/);
+  assert.match(result.solution.source, /Unit III, PDF pp\. 106–107/);
   assert.match(
     simulate("rsa", "A", "", "encrypt").solution.source,
-    /not covered in the supplied reviewer/,
+    /Unit V, PDF pp\. 133–136.*added practice/,
   );
 });

@@ -45,13 +45,15 @@ const wrap = value => (value % 26 + 26) % 26;
 // Independent formulas verify the generated problem statements and expected answers.
 function referenceAnswer(item) {
   const input = clean(item.src), direction = item.mode === 'decrypt' ? -1 : 1;
-  if (item.type === 'columnar') {
-    const order = Array.from({ length: input.length }, (_, i) => i)
-      .sort((a, b) => a % item.options.cols - b % item.options.cols || a - b);
-    if (direction === 1) return order.map(index => input[index]).join('');
-    const result = [];
-    order.forEach((position, rank) => { result[position] = input[rank]; });
-    return result.join('');
+  if (item.type === 'transposition') {
+    const destinations = item.key.split(' ').map(Number);
+    // Find which input supplies each output position, using the inverse lookup
+    // rather than the simulator's source-to-destination assignments.
+    return input.match(/.{8}/g).map(block => Array.from({ length: 8 }, (_, column) => {
+      const position = 8 - column;
+      const inputPosition = direction === 1 ? destinations.indexOf(position) + 1 : destinations[position - 1];
+      return block[8 - inputPosition];
+    }).join('')).join('');
   }
   return [...input].map((letter, i) => {
     if (item.type === 'mono') return direction === 1 ? item.key[alphabet.indexOf(letter)] : alphabet[item.key.indexOf(letter)];
@@ -60,33 +62,34 @@ function referenceAnswer(item) {
   }).join('');
 }
 
-test('the new bank contains exactly 100 distinct, sourced four-choice cards across the pictured INTE 401 topics', () => {
+test('the bank contains 160 distinct, sourced four-choice cards across all seven PDF units', () => {
   const { bank } = app();
-  assert.equal(bank.cards.length, 100);
-  assert.equal(new Set(bank.cards.map(card => card.id)).size, 100);
-  assert.equal(new Set(bank.cards.map(card => card.question)).size, 100);
-  assert.deepEqual(plain(bank.topics.map(topic => topic.id)), ['access', 'firewalls', 'remote', 'controls', 'idps', 'honeypots', 'scanning', 'biometrics', 'cryptography']);
-  assert.deepEqual(plain(bank.topics.map(topic => bank.cards.filter(card => card.topic === topic.id).length)), [14, 12, 8, 10, 14, 8, 10, 10, 14]);
+  assert.equal(bank.cards.length, 160);
+  assert.equal(new Set(bank.cards.map(card => card.id)).size, 160);
+  assert.equal(new Set(bank.cards.map(card => card.question)).size, 160);
+  assert.deepEqual(plain(bank.topics.map(topic => topic.id)), ['access', 'firewalls', 'remote', 'controls', 'idps', 'honeypots', 'scanning', 'biometrics', 'cryptography', 'implementation', 'symmetric', 'public-key', 'pki', 'attacks']);
+  assert.deepEqual(plain(bank.topics.map(topic => bank.cards.filter(card => card.topic === topic.id).length)), [14, 12, 8, 10, 14, 8, 10, 10, 14, 10, 15, 15, 10, 10]);
   for (const card of bank.cards) {
     assert.equal(new Set(card.choices).size, 4);
     assert.equal(card.choices.length, 4);
     assert.ok(Number.isInteger(card.answer) && card.answer >= 0 && card.answer < 4);
     assert.ok(card.explanation.length > 35);
-    assert.match(card.source, /Reviewer/);
+    assert.ok(card.source.startsWith(bank.sources.module));
+    assert.match(card.source, /Unit [IVX]+, PDF pp\./);
     assert.equal(typeof card.added, 'boolean');
   }
   assert.ok(bank.cards.filter(card => card.topic === 'remote').every(card => card.added));
-  assert.ok(bank.cards.find(card => card.question.includes('Write CATDOG')).added);
+  assert.equal(bank.cards.find(card => card.question.includes('what is ABCDEFGH')).added, false);
   assert.ok(bank.cards.find(card => card.question.includes('standard added Vigenère')).added);
   assert.match(bank.sources.module, /IASv2026/);
-  assert.match(bank.sources.reviewer, /Aug2026/);
+  assert.equal(bank.sources.module, '_IM_INTE-401-IASv2026 (1).pdf');
 });
 
 test('quiz filtering and choice shuffling retain correct answers without mutating the bank', () => {
   const { bank, study } = app(), original = JSON.stringify(bank.cards);
   for (const topic of ['all', ...bank.topics.map(topic => topic.id)]) {
-    const quiz = study.createQuiz({ topic, count: 100 });
-    assert.equal(quiz.items.length, topic === 'all' ? 100 : bank.cards.filter(card => card.topic === topic).length);
+    const quiz = study.createQuiz({ topic, count: bank.cards.length });
+    assert.equal(quiz.items.length, topic === 'all' ? bank.cards.length : bank.cards.filter(card => card.topic === topic).length);
     assert.equal(new Set(quiz.items.map(card => card.id)).size, quiz.items.length);
     for (const card of quiz.items) {
       const source = bank.cards.find(source => source.id === card.id);
@@ -94,7 +97,7 @@ test('quiz filtering and choice shuffling retain correct answers without mutatin
       assert.ok(topic === 'all' || card.topic === topic);
     }
   }
-  assert.equal(new Set(study.createQuiz({ count: 10 }).items.map(card => card.topic)).size, 9);
+  assert.equal(new Set(study.createQuiz({ count: 10 }).items.map(card => card.topic)).size, 10);
   assert.equal(JSON.stringify(bank.cards), original);
   assert.throws(() => study.createQuiz({ count: 0 }), /positive/);
   assert.throws(() => study.createQuiz({ topic: 'unknown' }), /nonempty/);
@@ -148,7 +151,7 @@ test('revealing a quiz answer counts as missed and flipping cannot earn repeated
 
 test('every generated exam balances four methods and both directions, with independently correct expected answers', () => {
   const { study } = app();
-  let irregularGrid = false;
+  let paddedTransposition = false;
   for (const difficulty of ['easy', 'medium', 'hard']) {
     for (const count of [8, 16, 24]) {
       for (let run = 0; run < 3; run++) {
@@ -166,15 +169,20 @@ test('every generated exam balances four methods and both directions, with indep
         for (const item of exam.items) {
           assert.equal(clean(item.target), referenceAnswer(item), JSON.stringify(item));
           assert.ok(item.rule.length > 60);
-          assert.match(item.source, /Reviewer.*IM/);
+          assert.match(item.source, /_IM_INTE-401-IASv2026 \(1\)\.pdf.*Unit III, PDF p/);
           if (item.type === 'vernam') assert.equal(item.key.length, clean(item.src).length);
           if (item.type === 'mono') assert.equal(new Set(item.key).size, 26);
-          if (item.type === 'columnar' && clean(item.src).length % item.options.cols) irregularGrid = true;
+          if (item.type === 'transposition') {
+            assert.equal(clean(item.src).length % 8, 0);
+            assert.deepEqual(item.key.split(' ').map(Number).sort(), [1,2,3,4,5,6,7,8]);
+            assert.match(item.rule, /right to left.*reversing every arrow.*retain/);
+            if (/X+$/.test(item.mode === 'encrypt' ? item.src : item.target)) paddedTransposition = true;
+          }
         }
       }
     }
   }
-  assert.ok(irregularGrid, 'Coverage includes incomplete transposition rows');
+  assert.ok(paddedTransposition, 'Coverage includes explicit padding retained by decryption');
   assert.throws(() => study.createCipherExam({ count: 10 }), /8, 16 or 24/);
   assert.throws(() => study.createCipherExam({ difficulty: 'unknown' }), /difficulty/);
 });
@@ -246,7 +254,7 @@ test('answers remain editable across navigation and are scored and saved only on
   assert.notEqual(study.examSignature(study.state.cipherExam), study.examSignature(exam));
 });
 
-test('exam answer review escapes user input and cites the updated PDFs rather than old page numbers', () => {
+test('exam answer review escapes user input and cites the supplied PDF page numbers', () => {
   const { study } = app();
   study.startCipherExam();
   study.state.cipherExam.answers[0] = '<img src=x onerror=alert(1)>';
@@ -254,9 +262,9 @@ test('exam answer review escapes user input and cites the updated PDFs rather th
   const review = study.renderCipherExam();
   assert.doesNotMatch(review, /<img/);
   assert.match(review, /&lt;img/);
-  assert.match(review, /IM Unit III, pp\. 108–109/);
+  assert.match(review, /Unit III, PDF pp\. 108–109/);
   assert.match(review, /A=0 calculations are added practice/);
-  assert.doesNotMatch(review, /Reviewer §12, page 10/);
+  assert.doesNotMatch(review, /Reviewer|Aug2026/);
 });
 
 test('new statistics restore safely and do not replace existing scores or flashcard mastery', () => {

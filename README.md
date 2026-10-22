@@ -1,200 +1,113 @@
 # CipherLab
 
-**An interactive study companion for INTE 401 — Information Assurance and Security 2.**
+An offline study companion for **INTE 401 — Information Assurance and Security 2**,
+based on **`_IM_INTE-401-IASv2026 (1).pdf`**, the supplied 162-page instructional
+material. Open [source/index.html](source/index.html) in a modern browser. No
+account, backend, installation or build step is required.
 
-CipherLab covers the supplied INTE 401 reviewer through guided lessons, hands-on
-cipher experiments, and exam practice. **CORE** and **BONUS** labels distinguish
-reviewer coverage from supplemental concepts and demonstrations.
+## Coverage
 
-The application runs entirely in your browser using HTML, CSS, and JavaScript.
-No account, installation, or backend is required.
+All seven units are included. References use the supplied PDF’s page numbers.
+
+| Unit | Topics | PDF pages |
+| --- | --- | --- |
+| I | Access control, firewalls, remote-access objectives, information systems, SDLC/SecSDLC and security roles | 13–41 |
+| II | IDPS, management/deployment, honeypots, assessment tools and biometrics | 43–100 |
+| III | Cryptography, substitution, transposition, XOR, Vernam and hash properties | 101–114 |
+| IV | DES, Triple DES, IDEA, RC5, AES, block modes and message authentication | 115–130 |
+| V | RSA, Diffie–Hellman, ElGamal, ECC, DSA and Schnorr signatures | 131–142 |
+| VI | PKI, certificates, trust chains, CRLs and OCSP | 144–152 |
+| VII | Passive/active attacks, cryptanalysis, key exchange attacks and key recovery | 154–161 |
+
+**CORE** identifies source coverage. **BONUS / added context** identifies details
+outside the PDF: remote protocols, named theoretical access models, control-function
+classifications, worked A=0 Vigenère calculations, behavioral-biometric examples,
+Playfair and rail fence. Atbash appears in the source’s history. Toy RSA illustrates
+source mathematics using small parameters and an added letter mapping.
+
+Lessons explain the source’s conflicting key figures: DES has 56 effective key bits
+and 48-bit round keys; IDEA has a 128-bit key. Historical algorithms and toy
+calculations are educational material.
 
 ## Features
 
-- **Guided lessons:** 18 lessons covering access control, firewalls, remote access,
-  security controls, IDPS, honeypots, scanning tools, biometrics and cryptography,
-  with supplemental cryptography lessons clearly labeled.
-- **Cipher simulator:** Encrypt and decrypt messages with ten cipher methods,
-  then follow numbered solutions with key alignment, intermediate arithmetic,
-  wraparound examples, transposition grids, byte operations, and toy RSA key math.
-  Each method has an **Explain this cipher** button with a plain-language guide,
-  key instructions, encryption/decryption steps, a worked example and common mistakes.
-- **Practice missions:** Check any combination of the ten simulator ciphers in a dropdown,
-  then generate 5, 10, or 20 challenges with difficulty settings, cipher-specific
-  hints, and answer feedback.
-- **Mock examination:** Take randomized quizzes from a 66-question bank, filter by
-  subject or core coverage, and review explanations with source notes.
-- **100-card topic quiz:** Answer original multiple-choice flashcards across the
-  nine pictured INTE 401 topic groups. Flip for explanations, filter by topic,
-  choose 10, 25, 50 or 100 cards, and retry a deck containing only missed cards.
-- **Four-cipher exam:** Generate 8, 16 or 24 written-answer problems covering
-  substitution, transposition, Vernam and Vigenère. Revise answers before submitting,
-  review scores and worked solutions, then create a new exam with fresh messages and keys.
-- **Flashcards:** Review 48 definition and formula cards, and mark cards as mastered.
-- **Cryptanalysis lab:** Explore letter frequencies and all 26 Caesar shifts.
-- **Progress tracking:** Earn XP and track lesson completion, answer accuracy,
-  exam statistics, and flashcard mastery.
-- **Quick reference:** Review formulas and course-source notes, or export progress
-  as JSON.
-- **Responsive interface:** Study on desktop or mobile in dark or light mode.
+- **27 lessons** with source notes, examples and exam traps.
+- **Ten cipher simulators** with guides and input-specific worked solutions.
+- **Practice missions** of 5, 10 or 20 questions using any checked cipher selection.
+- **226-question mock bank**, with topic/core-only filters and sampling across
+  selected PDF units before repeating units.
+- **160-question topic quiz** across 14 groups, with shuffled choices, explanations
+  and missed-card retries. Choose 10, 25, 50, 100 or the full available deck.
+- **Four-cipher written exam** with 8, 16 or 24 questions, balanced across
+  substitution, transposition, Vernam and Vigenère and both operation directions.
+  Revise answers before submission, then review grading and worked solutions.
+- **76 flashcards**, Caesar analysis, quick reference, progress export, local
+  XP/history, responsive layouts and light/dark appearance.
 
-## Supported ciphers
+## Transposition convention
 
-| Method | What you can explore | Material |
-| --- | --- | --- |
-| Caesar shift | Encrypt and decrypt with an alphabet shift | Core |
-| Substitution alphabet | Map letters using a custom 26-letter alphabet | Core |
-| Vernam | Apply the course's A=1 through Z=26 convention | Core |
-| XOR bytes | Combine message and key bytes and inspect the binary steps | Core |
-| Columnar transposition | Rearrange letters in a column grid | Bonus demonstration |
-| Vigenère | Apply a repeating keyword using A=0 through Z=25 | Bonus worked method |
-| Playfair | Transform letter pairs using a keyword-based 5×5 square | Bonus |
-| Rail fence | Rearrange letters along a zigzag pattern | Bonus |
-| Atbash | Substitute letters using a mirrored alphabet | Bonus |
-| Toy RSA | Explore public/private key arithmetic with small primes | Bonus |
+The simulator, missions and written exam use the **eight-position permutation on
+PDF p. 107**. The source gives these source-to-destination arrows:
 
-The Vernam and Vigenère simulators intentionally use different alphabet-numbering
-conventions. Their labels and worked steps explain which convention applies.
-
-These ciphers and small-key demonstrations are intended for learning. They should
-not be used to protect sensitive information.
-
-## Getting started
-
-Clone the repository or download it as a ZIP:
-
-```sh
-git clone https://github.com/Wa-mu/Ciberapp.git
-cd Ciberapp
+```text
+8→3, 7→6, 6→2, 5→7, 4→5, 3→1, 2→8, 1→4
 ```
 
-Open [`source/index.html`](source/index.html) in a modern browser. Keep `index.html`,
-`styles.css`, `reviewer.js`, `app.js`, `solutions.js`, `study-bank.js`, `study.js`,
-the favicon files, and the bundled `fonts` folder together in
-`source`. The downloaded app can run locally without an internet connection.
+The key field lists destinations for source positions **1 through 8**:
 
-A suggested study session:
+```text
+4 8 1 5 7 2 6 3
+```
 
-1. Start with **Learn the concepts** and mark lessons complete as you finish them.
-2. Open the **Cipher simulator**, load an example, and follow its worked steps.
-3. Work through the **100-card topic quiz** and retry your missed cards.
-4. Take a **Four-cipher exam**, inspect the worked solutions, then select
-   **Create a new simulated exam** for another set.
-5. Use **Practice missions** and **Mock examination** for additional practice.
-6. Use **Flashcards** and **Quick reference** to review unfamiliar topics.
+Position **1 is at the right**. The PDF states this for binary data; letter
+exercises explicitly use the same numbering.
 
-## Choose ciphers for practice missions
+```text
+Positions:  8 7 6 5 4 3 2 1
+Input:      A B C D E F G H
+Output:     G D B E H A C F
+```
 
-Open **Practice missions → Ciphers to practice** to open the checkbox dropdown.
-Check one or more methods, such as Vernam and Vigenère together. **Select all ciphers**
-checks or clears the full list; all ten start checked. Close with **Done**, Escape,
-or a click outside the dropdown. At least one checkbox must be checked to begin.
+Move each source symbol to its destination. Decrypt by reversing every arrow.
+Repeat independently for each block. Binary `01000011` encrypts to `10101000`.
 
-Every challenge uses a checked cipher, at any difficulty. Sets cycle through the
-checked methods in shuffled order, keeping their question counts as even as possible.
-Checking just Vernam produces an entirely Vernam set; checking Vernam and Vigenère
-mixes those two. Your checked choices, difficulty and question count remain selected
-when returning to setup during the same page session. RSA encryption answers are
-checked as complete integer sequences; decryption answers use letters. Existing
-CORE/BONUS labels and worked solutions remain.
+Use A–Z letters or binary digits, with optional whitespace. The simulator uppercases
+letters, removes whitespace, requires complete eight-symbol blocks, and never
+silently adds or removes padding. Generated questions include any required X padding
+in the message; retain it when answering. Easy written exams use the PDF key;
+other settings can provide fresh valid permutations.
 
-## August 2026 quiz cards and cipher exams
+## Other cipher conventions
 
-The new quiz and four-cipher exam follow the INTE 401 coverage in the supplied image
-and these supplied references:
+| Method | Convention |
+| --- | --- |
+| Caesar / substitution | Alphabet shifts or a supplied 26-letter replacement alphabet |
+| Vernam | Course **A=1…Z=26**, full-length pad, wrap into 1–26; PDF pp. 108–109 |
+| Vigenère | Added **A=0…Z=25** keyword calculation; polyalphabetic classification on PDF p. 107 |
+| XOR | Source example `CAT` with repeated `V` → hex `15 17 02`; UTF-8 extension supported |
+| Atbash | Mirrored alphabet, described in the history on p. 103 |
+| Toy RSA | Default p=7, q=13, e=5, d=29 and message 10 → 82, matching the source arithmetic |
+| Playfair | Bonus 5×5 square, I/J combined; X fillers, Q after X; retain fillers when decrypting |
+| Rail fence | Bonus zigzag rearrangement |
 
-- `_IM_INTE-401-IASv2026.pdf` — 162-page revised instructional material.
-- `INTE_401_Information_Assurance_Security_2_Reviewer_Aug2026.pdf` — 16-page updated reviewer.
-
-The 100 original quiz cards cover access control (14), firewalls (12), remote
-connections (8), controls (10), IDPS (14), honeypots (8), scanning (10), biometrics
-(10) and cryptography (14). Questions and choices shuffle for each session. The first
-answer is scored; revealing without answering counts as a miss. Correct first
-answers earn 10 XP. A completed deck saves its score; **Retry missed cards** creates
-a fresh deck from that attempt's misses.
-
-Every cipher exam includes equal numbers of the four methods and equal encryption
-and decryption counts within each method. Substitution includes Caesar and supplied
-replacement alphabets. Transposition uses the reviewer's explicitly specified,
-unpadded row-fill/column-read grid. Vernam uses the course's **A=1…Z=26** arithmetic;
-Vigenère uses the added **A=0…Z=25** worked method. Source notes distinguish course
-concepts from added calculations and background details.
-
-Exam answers remain editable until **Submit exam & see results**. Case and spaces
-are ignored; extra symbols are rejected and blanks receive zero. Submission saves
-one score and 15 XP per correct answer, then unlocks a breakdown by cipher and
-worked solutions. **Create a new simulated exam** generates a different set using
-the selected length and difficulty. Active answers stay available when switching
-screens during the same page session; reloading starts a new session. Completed
-scores and existing lesson/flashcard progress remain in browser storage.
-
-The PDFs remain local reference material and are not included in the repository.
-
-## Playfair convention
-
-Select **Cipher simulator → Playfair**. Enter a keyword and a message, then encrypt
-or decrypt to see the 5×5 square, prepared pairs, filler insertions and every pair's
-transformation. Playfair is BONUS material outside the supplied INTE 401 reviewer.
-
-The square combines I/J. Plaintext is uppercased and formatting is removed. Repeated
-letters in a pair and an odd final letter receive an X filler; Q is used after X.
-Decryption returns prepared plaintext with fillers retained, because automatically
-removing X/Q could erase genuine letters. Hard practice missions use the same rule.
-
-Rules were checked against [PBS NOVA's Playfair instructions](https://www.pbs.org/wgbh/nova/decoding/playfair.html).
-The Q fallback after X and retaining fillers are explicit app conventions. Regression
-checks include a published example, every ordered pair of distinct square letters,
-and repeated-letter and malformed-input cases.
+Playfair rules were checked against
+[PBS NOVA’s instructions](https://www.pbs.org/wgbh/nova/decoding/playfair.html).
+The X/Q fallback is an explicit app convention.
 
 ## Progress and privacy
 
-CipherLab saves progress in your browser's local storage. No answers or progress
-are sent to a server.
+Progress stays in browser local storage. Existing lesson IDs, all original
+flashcard mastery positions and completed scores are preserved. New lessons
+increase the progress denominator. Active answers survive navigation in the page
+session; reloading starts a fresh attempt. Export progress from Quick reference
+before clearing browser data or changing site addresses.
 
-Progress is specific to the browser, profile, and site address you use. A local
-copy, a Vercel preview, and the production site have separate saved progress.
-Clearing browser storage also clears that progress. Use **Export progress as JSON**
-on the Quick reference screen to keep a separate record.
+The PDF stays local and is not redistributed with the app.
 
-## Deploy to Vercel
+## Development and checks
 
-1. Import [Wa-mu/Ciberapp](https://github.com/Wa-mu/Ciberapp) into
-   [Vercel](https://vercel.com/new).
-2. Keep the **Root Directory** set to the repository root (`./`).
-3. Click **Deploy**.
-
-The included [`vercel.json`](vercel.json) serves `source` as a static site using the
-**Other** framework preset. No build command, dependency installation, environment
-variables, or database setup is needed.
-
-## Project structure
-
-```text
-CipherLab/
-├── source/
-│   ├── index.html    Application shell and navigation
-│   ├── styles.css    Layout, responsive styles, and themes
-│   ├── reviewer.js   Reviewer topics, lessons, questions and additional flashcards
-│   ├── app.js        Ciphers, training modes, and saved progress
-│   ├── solutions.js  Input-specific explanations and worked solution rendering
-│   ├── study-bank.js 100 original August 2026 INTE 401 quiz cards
-│   ├── study.js      Card quizzes, generated cipher exams, grading and review
-│   ├── favicon.svg  Vector brand favicon, with favicon.ico as a fallback
-│   ├── fonts/        Local interface and monospace fonts, with their licenses
-│   └── README.md     Additional study-source notes
-├── .gitignore
-├── tests/           Cipher, reviewer coverage and study behavior checks
-├── .github/         Automated checks for pushes and pull requests
-├── README.md
-└── vercel.json       Vercel deployment configuration
-```
-
-## Development
-
-Edit the files in `source` and refresh your browser to see changes. There are no
-framework dependencies or bundling steps.
-
-If Node.js is installed, check JavaScript syntax with:
+Keep the entire `source` directory together, including its bundled fonts. Edit
+source files and reload the browser. With Node.js installed, run:
 
 ```sh
 node --check source/reviewer.js
@@ -205,33 +118,18 @@ node --check source/study.js
 node --test tests/*.test.cjs
 ```
 
-To run the 16 built-in cipher checks, open the app's browser developer console and
-execute:
+Tests cover source coverage, independently calculated generated answers,
+transposition direction/binary inputs, validation, exam behavior, saved progress,
+Playfair and appearance. Browser checks are available through
+`CipherLabTest.selfTest()`. GitHub Actions runs syntax and regression checks on
+pushes and pull requests.
 
-```js
-CipherLabTest.selfTest()
-```
+See [source/README.md](source/README.md) for file roles. Inter and JetBrains Mono
+are bundled with SIL Open Font License notices in [source/fonts](source/fonts).
 
-Each result contains a check name and a boolean; every boolean should be `true`.
+## Vercel hosting
 
-The original lesson and simulator content reference is `INTE_401_Information_Assurance_Security_2_Reviewer.pdf`
-from the supplied `IAS2 IM` folder. Lessons and quiz explanations cite sections
-1–13 of this 16-page reviewer. It covers PUP Modules 1–3; later asymmetric-system,
-PKI and attack details remain supplemental. The unrelated COMP 023 reviewer is
-not part of this app. The PDFs are not redistributed with the application.
-
-Simulator source notes refer to sections 10–13 (pages 9–11). They distinguish the
-reviewer's examples from additional demonstrations. The course Vernam method
-uses A=1; Vigenère uses A=0. Long calculation tables show 32 rows initially, with
-the remaining calculations available in an expandable section.
-
-GitHub Actions runs syntax and regression checks on every push and pull request.
-Existing lesson completion and the original flashcard mastery positions are retained
-when updating; new lessons increase the total used for course progress.
-
-## Typography
-
-CipherLab uses [Inter](https://github.com/rsms/inter) for interface text and
-[JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) for cipher input,
-output, and calculations. Fonts are bundled locally for offline use. Their SIL
-Open Font License notices are included in [`source/fonts`](source/fonts).
+Import [Wa-mu/Ciberapp](https://github.com/Wa-mu/Ciberapp) into Vercel with the
+repository root (`./`) as Root Directory. [vercel.json](vercel.json) selects the
+Other preset and serves `source` without installation, a build command,
+environment variables or a database.

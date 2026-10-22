@@ -32,7 +32,7 @@ test('classic Playfair example explains the square, inserted filler and every pa
   assert.equal(result.solution.grid.rows.length, 5);
   assert.equal(result.solution.table.rows.length, 13);
   assert.deepEqual(plain(result.solution.table.rows[0]), [1, 'HI', 'H: (3, 5); I: (2, 1)', 'Rectangle', 'BM']);
-  assert.match(result.solution.source, /BONUS.*not covered/);
+  assert.match(result.solution.source, /BONUS.*outside the supplied PDF/);
   assert.match(result.solution.notes.join(' '), /genuine X or Q/);
 });
 

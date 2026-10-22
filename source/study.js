@@ -7,16 +7,17 @@
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   })[char]);
+  const moduleSource = global.CipherLabReviewer.filename;
   const methods = [
-    { id: 'substitution', name: 'Substitution cipher', source: 'Reviewer §10, p. 8 · IM Unit III, pp. 106–107' },
-    { id: 'transposition', name: 'Transposition cipher', source: 'Reviewer §11, p. 8 · IM p. 107; specified columnar grid is added practice' },
-    { id: 'vernam', name: 'Vernam cipher', source: 'Reviewer §12, p. 9 · IM Unit III, pp. 108–109 · Course A=1' },
-    { id: 'vigenere', name: 'Vigenère cipher', source: 'Reviewer §13, p. 9 · IM p. 107 names the cipher; A=0 calculations are added practice' },
+    { id: 'substitution', name: 'Substitution cipher', source: moduleSource + ' · Unit III, PDF pp. 106–107' },
+    { id: 'transposition', name: 'Transposition cipher', source: moduleSource + ' · Unit III, PDF p. 107 · Eight-position permutation' },
+    { id: 'vernam', name: 'Vernam cipher', source: moduleSource + ' · Unit III, PDF pp. 108–109 · Course A=1' },
+    { id: 'vigenere', name: 'Vigenère cipher', source: moduleSource + ' · Unit III, PDF p. 107 · Classification is core; A=0 calculations are added practice' },
   ];
   let api = {};
   const state = {
     quiz: null, cipherExam: null,
-    quizOptions: { topic: 'all', count: 100 },
+    quizOptions: { topic: 'all', count: bank.cards.length },
     cipherOptions: { count: 16, difficulty: 'medium' },
   };
   function randomIndex(length) {
@@ -40,9 +41,9 @@
   const methodName = id => methods.find(method => method.id === id).name;
   const quizBank = topic => bank.cards.filter(card => topic === 'all' || card.topic === topic);
   const head = (label, title, description) => `<div class="eyebrow">${escape(label)}</div><h1 class="page-heading">${escape(title)}</h1><p class="page-sub">${escape(description)}</p>`;
-  const sourceNote = '<p class="smalltxt muted">Sources: August 2026 INTE 401 instructional material and updated reviewer. “Added context” labels identify details or worked exercises added by the reviewer.</p>';
+  const sourceNote = `<p class="smalltxt muted">Source: ${escape(moduleSource)}, 162 PDF pages, Units I–VII. References use PDF page numbers. Added protocol details and worked conventions are labeled as supplemental.</p>`;
 
-  function createQuiz({ topic = 'all', count = 100, cards = quizBank(topic), previous = null } = {}) {
+  function createQuiz({ topic = 'all', count = bank.cards.length, cards = quizBank(topic), previous = null } = {}) {
     if (!Number.isInteger(count) || count < 1 || !cards.length) throw Error('Choose a nonempty quiz and a positive whole-number length.');
     // Round-robin topic pools keep short mixed quizzes from omitting entire topics.
     const pools = shuffle([...new Set(cards.map(card => card.topic))])
@@ -106,15 +107,17 @@
         rule = 'Custom monoalphabetic substitution. The key alphabet replaces A–Z in order. For decryption, find each ciphertext letter in the key alphabet and read the normal letter above it.';
       }
     } else if (task.method === 'transposition') {
-      type = 'columnar';
-      options.cols = 2 + randomIndex(difficulty === 'easy' ? 2 : difficulty === 'medium' ? 4 : 5);
-      rule = `Use ${options.cols} columns. Remove spaces and uppercase letters. Encrypt by filling rows left to right, then reading columns top to bottom, from left to right. No padding. To decrypt, fill the columns using their original lengths, then read rows. This is the reviewer's added grid method.`;
+      key = difficulty === 'easy' ? '4 8 1 5 7 2 6 3' : shuffle([1,2,3,4,5,6,7,8]).join(' ');
+      if (key === '1 2 3 4 5 6 7 8') key = '4 8 1 5 7 2 6 3';
+      phrase = letters(phrase);
+      phrase = phrase.padEnd(Math.ceil(phrase.length / 8) * 8, 'X');
+      rule = 'Transposition by eight-position permutation. The key lists destinations for source positions 1–8. Number each block right to left (position 1 is the rightmost symbol). Encrypt by moving source to destination; decrypt by reversing every arrow. Explicit X padding is already part of the displayed message: retain it in your answer.';
     } else if (task.method === 'vernam') {
       key = Array.from({ length: letters(phrase).length }, () => alphabet[randomIndex(26)]).join('');
       rule = 'Course Vernam: A=1 through Z=26. Add plaintext and pad values to encrypt; subtract the pad to decrypt. Wrap into 1–26. Use one pad letter per message letter; spaces do not consume pad letters.';
     } else {
       key = pick(['KEY', 'LOCK', 'GUARD', 'CIPHER', 'SIGNAL', 'ACCESS', 'TRUST', 'SHIELD', 'SAFETY', 'ORANGE', 'RIVER', 'LEMON', 'VAULT', 'CLOUD', 'MAPLE', 'SILVER']);
-      rule = 'Vigenère: A=0 through Z=25. Repeat the keyword over message letters only. Add key values modulo 26 to encrypt; subtract them modulo 26 to decrypt. Spaces do not advance the key. This worked algorithm is added practice for the pictured course topic.';
+      rule = 'Vigenère: A=0 through Z=25. Repeat the keyword over message letters only. Add key values modulo 26 to encrypt; subtract them modulo 26 to decrypt. Spaces do not advance the key. The PDF names Vigenère as polyalphabetic; this A=0 worked algorithm is added practice.';
     }
     const encrypted = api.simulate(type, phrase, key, 'encrypt', options).text;
     return {
@@ -191,14 +194,14 @@
 
   function renderQuizSetup() {
     const options = state.quizOptions, available = quizBank(options.topic).length;
-    const sizes = [...new Set([10, 25, 50, available].filter(count => count <= available))];
+    const sizes = [...new Set([10, 25, 50, 100, available].filter(count => count <= available))];
     const progress = api.getProgress();
-    return `${head('100-CARD TOPIC QUIZ', 'INTE 401 quiz cards', 'Practice 100 original questions across the INTE 401 examination topics. Answer a card, flip to its explanation, then revisit what you missed.')}
+    return `${head(`${bank.cards.length}-CARD TOPIC QUIZ`, 'INTE 401 quiz cards', `Practice ${bank.cards.length} original questions across all seven units of the supplied PDF. Answer a card, flip to its explanation, then revisit what you missed.`)}
       <div class="two-col">
         <section class="panel">
           <h2>Build your quiz deck</h2>
           <label class="input-label" for="study-quiz-topic">Topic</label>
-          <select class="field" id="study-quiz-topic"><option value="all">All INTE 401 topics · 100 cards</option>${bank.topics.map(topic => `<option value="${topic.id}" ${options.topic === topic.id ? 'selected' : ''}>${escape(topic.name)} · ${quizBank(topic.id).length} cards</option>`).join('')}</select>
+          <select class="field" id="study-quiz-topic"><option value="all">All INTE 401 topics · ${bank.cards.length} cards</option>${bank.topics.map(topic => `<option value="${topic.id}" ${options.topic === topic.id ? 'selected' : ''}>${escape(topic.name)} · ${quizBank(topic.id).length} cards</option>`).join('')}</select>
           <div class="form-row"><div><label class="input-label" for="study-quiz-count">Cards in this quiz</label>
             <select class="field" id="study-quiz-count">${sizes.map(count => `<option value="${count}" ${Math.min(options.count, available) === count ? 'selected' : ''}>${count === available ? `Full deck · ${count} cards` : `${count} cards`}</option>`).join('')}</select>
           </div></div>
@@ -260,14 +263,14 @@
         <section class="panel"><h2>Create a simulated exam</h2>
           <div class="form-row">
             <div><label class="input-label" for="study-cipher-count">Exam length</label><select class="field" id="study-cipher-count">${[8, 16, 24].map(count => `<option value="${count}" ${options.count === count ? 'selected' : ''}>${count} questions · ${count / 4} per cipher</option>`).join('')}</select></div>
-            <div><label class="input-label" for="study-cipher-difficulty">Difficulty</label><select class="field" id="study-cipher-difficulty">${[['easy', 'Short words'], ['medium', 'Standard phrases'], ['hard', 'Longer phrases & grids']].map(([value, label]) => `<option value="${value}" ${options.difficulty === value ? 'selected' : ''}>${label}</option>`).join('')}</select></div>
+            <div><label class="input-label" for="study-cipher-difficulty">Difficulty</label><select class="field" id="study-cipher-difficulty">${[['easy', 'Short words'], ['medium', 'Standard phrases'], ['hard', 'Longer phrases & keys']].map(([value, label]) => `<option value="${value}" ${options.difficulty === value ? 'selected' : ''}>${label}</option>`).join('')}</select></div>
           </div>
           <ul class="study-method-list">${methods.map(method => `<li><b>${escape(method.name)}</b><span>Encryption + decryption</span></li>`).join('')}</ul>
           <p>Every exam balances all four ciphers and both directions. Messages, keys and question order change when you create a new exam.</p>
           <button class="btn" id="start-cipher-exam">Create simulated exam →</button>
         </section>
         <aside class="panel"><h2>Know the conventions</h2>
-          <p><b>Substitution:</b> Caesar shifts and supplied 26-letter alphabets.</p><p><b>Transposition:</b> The reviewer's added row-fill, column-read grid. Each question specifies its column count; no padding is added.</p><p><b>Vernam:</b> Course A=1 through Z=26, with a full-length pad.</p><p><b>Vigenère:</b> Added A=0 through Z=25 exercises with a repeating keyword.</p>
+          <p><b>Substitution:</b> Caesar shifts and supplied 26-letter alphabets.</p><p><b>Transposition:</b> The PDF’s eight-position permutation. Number right to left; the key lists destinations for sources 1–8. Each message includes any required X padding.</p><p><b>Vernam:</b> Course A=1 through Z=26, with a full-length pad.</p><p><b>Vigenère:</b> Added A=0 through Z=25 exercises with a repeating keyword.</p>
           <div class="notice">This is an untimed practice exam. You may move between questions and revise answers before submitting. Case and spacing are ignored; use A–Z letters. Blank answers receive zero.</div>
           <div class="mini-cards mt"><div class="mini-card"><b class="big-stat">${progress.cipherExamSessions || 0}</b><p>Cipher exams finished</p></div><div class="mini-card"><b class="big-stat">${progress.cipherExamBest || 0}%</b><p>Best cipher-exam score</p></div></div>
           ${sourceNote}
@@ -278,7 +281,7 @@
   function keyHtml(item) {
     if (item.type === 'mono') return `<label class="input-label">Plain alphabet → replacement alphabet</label><pre class="codebox study-key">${alphabet}\n${escape(item.key)}</pre>`;
     if (item.type === 'caesar') return `<div class="notice"><b>Shift:</b> ${item.options.shift} · A=0 through Z=25</div>`;
-    if (item.type === 'columnar') return `<div class="notice"><b>Grid key:</b> ${item.options.cols} columns · no padding</div>`;
+    if (item.type === 'transposition') return `<div class="notice"><b>Source positions:</b> 1 2 3 4 5 6 7 8<br><b>Destinations:</b> <span class="mono">${escape(item.key)}</span><br>Position 1 is at the right; reverse arrows to decrypt.</div>`;
     return `<label class="input-label">${item.type === 'vernam' ? 'One-time pad · A=1 through Z=26' : 'Repeating keyword · A=0 through Z=25'}</label><pre class="codebox study-key">${escape(item.key)}</pre>`;
   }
 
@@ -303,7 +306,7 @@
     return `${head('FOUR-CIPHER EXAM · ANSWERS HIDDEN', 'Solve before you submit', `Question ${exam.i + 1} of ${exam.items.length}. Your answers stay in this exam while you move between questions.`)}
       <div class="two-col cipher-exam-layout">
         <section class="panel">
-          <div class="split study-status"><span class="pill core">${escape(methodName(item.method))}</span><span class="pill">${item.mode.toUpperCase()}</span></div>
+          <div class="split study-status"><span class="pill ${item.type === 'vigenere' ? 'bonus' : 'core'}">${escape(methodName(item.method))}${item.type === 'vigenere' ? ' · ADDED CALCULATIONS' : ''}</span><span class="pill">${item.mode.toUpperCase()}</span></div>
           <h2 class="question-big" id="study-question" tabindex="-1">${item.mode === 'encrypt' ? 'Encrypt this plaintext.' : 'Decrypt this ciphertext.'}</h2>
           <p>${escape(item.rule)}</p>${keyHtml(item)}
           <div class="mission-prominent">${escape(item.src)}</div>

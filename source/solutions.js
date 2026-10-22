@@ -25,19 +25,18 @@
       ? String(value).slice(0, 160) + "… (preview)"
       : String(value);
   const sources = {
-    caesar: "Reviewer §10, page 9 · Caesar and substitution",
-    mono: "Reviewer §10, page 9 · Substitution concept; custom mapping is an app demonstration",
-    columnar: "Reviewer §11, pages 9–10 · Row-fill, column-read demonstration",
-    vernam: "Reviewer §12, page 10 · Course Vernam, A=1 through Z=26",
-    vigenere:
-      "Reviewer §13, pages 10–11 · Vigenère worked example is BONUS practice",
-    xor: "Reviewer §12, page 10 · XOR connection; byte calculations are an added demonstration",
-    atbash:
-      "BONUS · Additional mirrored-alphabet demonstration; not covered in the supplied reviewer",
-    rail: "BONUS · Additional transposition demonstration; not covered in the supplied reviewer",
-    rsa: "BONUS · Additional toy RSA demonstration; not covered in the supplied reviewer",
-    playfair: "BONUS · Playfair extension, not covered in the supplied reviewer; rules checked against PBS NOVA’s The Playfair Cipher",
+    caesar: 'Unit III, PDF pp. 106–107 · Substitution; MOM → PRP at shift +3',
+    mono: 'Unit III, PDF pp. 106–107 · Substitution; supplied replacement alphabets are practice keys',
+    transposition: 'Unit III, PDF p. 107 · Eight-position transposition key; binary positions numbered right to left',
+    vernam: 'Unit III, PDF pp. 108–109 · Course Vernam, A=1 through Z=26',
+    vigenere: 'Unit III, PDF p. 107 · Polyalphabetic classification; BONUS A=0 worked algorithm',
+    xor: 'Unit III, PDF pp. 107–108 · CAT XOR repeated V; UTF-8 extension is added practice',
+    atbash: 'Unit III, PDF p. 103 · Reversed alphabet in the history of cryptography',
+    rail: 'BONUS · Additional transposition exercise outside the supplied PDF',
+    rsa: 'Unit V, PDF pp. 133–136 · RSA arithmetic; tiny primes and letter mapping are added practice',
+    playfair: 'BONUS · Playfair is outside the supplied PDF; rules checked against PBS NOVA’s The Playfair Cipher',
   };
+  for (const kind of Object.keys(sources)) sources[kind] = global.CipherLabReviewer.filename + ' · ' + sources[kind];
 
   function build({ kind, input, key, mode, options = {}, result }) {
     const decrypt = mode === "decrypt";
@@ -286,97 +285,26 @@
       );
       finish();
     }
-    if (kind === "columnar") {
-      const grid = result.grid;
-      const columns =
-        grid[0]?.length || Math.min(12, Math.max(2, Number(options.cols) || 3));
-      const length = inputLetters.length,
-        full = Math.floor(length / columns),
-        extra = length % columns;
-      const chunks = Array.from({ length: columns }, (_, column) =>
-        grid.map((row) => row[column]).join(""),
-      );
-      solution.formula = [
-        "Encrypt: fill rows → read columns",
-        "Decrypt: fill columns → read rows",
-      ].join(nl);
-      solution.legend =
-        "Read columns left to right, and letters within each column from top to bottom. No padding letters are added.";
-      step(
-        "Prepare the grid",
-        `${normalize} Arrange ${length} letters in ${columns} columns and ${grid.length} rows.`,
-        `rows = ceiling(${length} ÷ ${columns}) = ${grid.length}`,
-      );
-      if (decrypt) {
-        step(
-          "Find the column lengths before filling",
-          extra
-            ? `${length} ÷ ${columns} gives ${full} complete rows and ${extra} leftover letters. The leftmost ${extra} column(s) contain ${full + 1} letters; the rest contain ${full}. This handles an incomplete final row.`
-            : `The length divides evenly into ${columns} columns. Each column contains ${full} letters.`,
-        );
-        step(
-          "Split the ciphertext and fill columns",
-          "Take these ciphertext blocks in order. Put each into its column from top to bottom.",
-          null,
-          {
-            caption: "Ciphertext blocks for the columns",
-            columns: ["Column", "Letter count", "Block"],
-            rows: chunks.map((chunk, index) => [
-              index + 1,
-              chunk.length,
-              chunk || "(empty)",
-            ]),
-          },
-        );
-        step(
-          "Read the reconstructed rows",
-          `Read left to right across each row, then continue on the next row: ${grid
-            .map((row) => row.join(""))
-            .filter(Boolean)
-            .map(preview)
-            .join(" | ")}. Result: ${preview(result.text)}.`,
-        );
-      } else {
-        step(
-          "Fill across the rows",
-          `Write left to right and continue on the next row when a row is full: ${grid
-            .map((row) => row.join(""))
-            .filter(Boolean)
-            .map(preview)
-            .join(" | ")}.`,
-        );
-        step(
-          "Read down each column",
-          "Start at the top of column 1, read downward, then move to column 2 and continue left to right.",
-          null,
-          {
-            caption: "Column readout",
-            columns: ["Column", "Letter count", "Read downward"],
-            rows: chunks.map((chunk, index) => [
-              index + 1,
-              chunk.length,
-              chunk || "(empty)",
-            ]),
-          },
-        );
-        finish();
-      }
-      solution.grid = {
-        caption: decrypt
-          ? "Reconstructed grid — read across rows"
-          : "Filled grid — read down columns",
-        columns: [
-          "Row",
-          ...Array.from({ length: columns }, (_, index) => `C${index + 1}`),
-        ],
-        rows: grid.map((row, index) => [
-          index + 1,
-          ...row.map((value) => value || "·"),
-        ]),
+    if (kind === 'transposition') {
+      const permutation = result.permutation;
+      solution.formula = decrypt ? 'For each encryption arrow source → destination, move destination → source.' : 'C[destination] = P[source] inside each 8-symbol block.';
+      solution.legend = 'Position 1 is the rightmost symbol: label positions 8 7 6 5 4 3 2 1 from left to right. The key lists destinations for source positions 1 through 8.';
+      step('Prepare complete blocks', 'Remove whitespace and uppercase letters. Use either A–Z letters or binary bits. Process each eight-symbol block independently. No padding is added automatically.');
+      step('Read the position key', decrypt ? `Reverse every encryption arrow to recover the original block. For this key, 1→${permutation[0]} becomes ${permutation[0]}→1 when decrypting.` : 'Move the symbol at each source position to the destination specified by the key.', null, {
+        caption: 'Position mapping — right-to-left numbering',
+        columns: ['Encryption source', 'Encryption destination', 'This operation'],
+        rows: permutation.map((destination,index)=>[index+1,destination,decrypt ? destination+' → '+(index+1) : (index+1)+' → '+destination]),
+      });
+      solution.table = {
+        caption: 'Move every symbol', columns: ['Block', 'Symbol', 'Input position', 'Output position'],
+        rows: trace.map(row=>[row.block,row.input,row.source,row.destination]),
       };
-      solution.notes.push(
-        "A dot marks an unused cell, not a padding character. Decryption restores letter order but cannot restore spacing, punctuation, or original case removed during preparation.",
-      );
+      solution.grid = {
+        caption: 'Blocks read from left to right', columns: ['Block', 'Input: positions 8…1', 'Output: positions 8…1'],
+        rows: result.blocks.map((block,index)=>[index+1,block.input,block.output]),
+      };
+      solution.notes.push('The PDF specifies right-to-left numbering for binary data. Letter practice explicitly uses that same convention. Spaces and original case are not restored.', 'Retain any padding supplied as part of the question; deleting X symbols could erase real data.');
+      finish();
     }
     if (kind === "rail") {
       const grid = result.grid,
@@ -630,7 +558,7 @@
       if (solution.table.rows.length > 32)
         calculations += `<details class="solution-more"><summary>Show the remaining ${solution.table.rows.length - 32} calculations (${solution.table.rows.length} total)</summary>${tableHtml(solution.table, solution.table.rows.slice(32))}</details>`;
     }
-    return `<div class="solution-guide"><div class="solution-rule"><span class="solution-label">${escape(solution.operation)} rule</span><pre class="solution-math">${escape(solution.formula)}</pre><p>${escape(solution.legend)}</p></div><ol class="solution-steps">${steps}</ol>${solution.grid ? tableHtml(solution.grid) : ""}${calculations}<div class="solution-notes">${solution.notes.map((note) => `<p>${escape(note)}</p>`).join("")}</div><p class="solution-source">${escape(solution.source)}. Reviewer page references use the supplied INTE 401 reviewer PDF.</p></div>`;
+    return `<div class="solution-guide"><div class="solution-rule"><span class="solution-label">${escape(solution.operation)} rule</span><pre class="solution-math">${escape(solution.formula)}</pre><p>${escape(solution.legend)}</p></div><ol class="solution-steps">${steps}</ol>${solution.grid ? tableHtml(solution.grid) : ""}${calculations}<div class="solution-notes">${solution.notes.map((note) => `<p>${escape(note)}</p>`).join("")}</div><p class="solution-source">${escape(solution.source)}. References use the supplied 162-page PDF’s page numbers.</p></div>`;
   }
   global.CipherLabSolutions = Object.freeze({ build, render });
 })(window);

@@ -32,9 +32,9 @@ test('every reviewer topic has a lesson, sourced questions and core exam coverag
   const { read } = app();
   const { topics, lessons, questions, cards } = plain(read('({topics:CipherLabReviewer.topics,lessons,questions:Q,cards:flashcards})'));
   assert.equal(new Set(lessons.map((lesson) => lesson.id)).size, lessons.length);
-  assert.equal(topics.length, 9);
+  assert.equal(topics.length, 14);
   for (const topic of topics) {
-    assert.ok(lessons.some((lesson) => lesson.id === topic.id || topic.id === 'cryptography' && lesson.id === 'foundations'));
+    assert.ok(lessons.some((lesson) => lesson.topic === topic.id));
     assert.ok(questions.filter((item) => item.topic === topic.id && item.tag === 'CORE').length >= 2);
   }
   for (const item of questions) {
@@ -66,6 +66,30 @@ test('exam topic and scope filters determine the actual session and its length',
   read('startExam(Q.length)');
   assert.equal(read('S.exam.items.length'), read('Q.length'));
   assert.equal(new Set(plain(read('S.exam.items.map(item=>item.q)'))).size, read('Q.length'));
+});
+
+test('mixed mock exams cover all seven PDF units and reuse the sourced card answers', () => {
+  const { read } = app();
+  for (const scope of ['all', 'core']) {
+    read(`S.examTopic='all'; S.examScope=${JSON.stringify(scope)}; startExam(20)`);
+    const units = plain(read('S.exam.items.map(item=>CipherLabReviewer.topics.find(topic=>topic.id===item.topic).unit)'));
+    assert.equal(new Set(units).size, 7);
+  }
+  assert.equal(read('Q.length'), 226);
+  assert.equal(read('lessons.length'), 27);
+  assert.equal(read('flashcards.length'), 76);
+  assert.equal(read('CipherLabReviewer.units.length'), 7);
+  assert.ok(read("CipherLabStudyBank.cards.every(card=>Q.some(item=>item.q===card.question&&item.a[item.c]===card.choices[card.answer]&&item.source===card.source&&item.tag===(card.added?'BONUS':'CORE')))"));
+  assert.ok(read("[...lessons,...Q].every(item=>item.source.includes(CipherLabReviewer.filename))"));
+  assert.ok(read("['modern','hashes','attacks'].every(id=>lessons.find(lesson=>lesson.id===id).level==='CORE')"));
+});
+
+test('all original flashcard mastery positions stay attached to the same cards', () => {
+  const { read } = app(JSON.stringify({ flashMastered: [0, 17, 18, 43, 44, 45, 46, 47] }));
+  assert.deepEqual(plain(read('progress.flashMastered')), [0, 17, 18, 43, 44, 45, 46, 47]);
+  assert.equal(read('flashcards[44][0]'), 'What does Playfair transform at each step?');
+  assert.equal(read('flashcards[47][0]'), 'Should Playfair decryption automatically delete every X?');
+  assert.equal(read('flashcards[48][0]'), 'What are the PDF’s six information-system components?');
 });
 
 test('existing saved lessons and original flashcard mastery survive the content update', () => {
@@ -109,7 +133,7 @@ test('invalid numerical cipher keys produce useful errors instead of broken calc
   const { read } = app();
   for (const value of ['2.5', 'NaN', 'Infinity']) {
     assert.throws(() => read(`simulate('caesar','CAT','','encrypt',{shift:${value}})`), /whole number/);
-    assert.throws(() => read(`simulate('columnar','CAT','','encrypt',{cols:${value}})`), /whole number of columns/);
+    assert.throws(() => read(`simulate('transposition','ABCDEFGH',${JSON.stringify(value)},'encrypt')`), /each destination/);
     assert.throws(() => read(`simulate('rail','CAT','','encrypt',{rails:${value}})`), /whole number of rails/);
   }
 });
@@ -170,7 +194,7 @@ test('checkbox-selected mission sets contain only checked ciphers and balance th
   const { read } = app();
   read('let missionSeed=17; Math.random=()=>((missionSeed=(missionSeed*1664525+1013904223)>>>0)/4294967296)');
   for (const difficulty of ['easy', 'medium', 'hard', 'mixed']) {
-    for (const selection of [['vernam', 'vigenere'], ['mono', 'columnar', 'playfair'], plain(read('types.map(type=>type.id)'))]) {
+    for (const selection of [['vernam', 'vigenere'], ['mono', 'transposition', 'playfair'], plain(read('types.map(type=>type.id)'))]) {
       read(`S.missionDifficulty=${JSON.stringify(difficulty)}; S.missionCiphers=${JSON.stringify(selection)}; S.missionCipherQueue=[]`);
       const counts = new Map(selection.map(id => [id, 0]));
       for (let i = 0; i < 20; i++) {

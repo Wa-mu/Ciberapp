@@ -1,21 +1,12 @@
-/* Original practice questions based on the supplied August 2026 INTE 401 PDFs. */
+/* Original practice questions based on the supplied 162-page INTE 401 PDF. */
 (function (global) {
   'use strict';
   const sources = {
-    module: '_IM_INTE-401-IASv2026.pdf',
-    reviewer: 'INTE_401_Information_Assurance_Security_2_Reviewer_Aug2026.pdf',
+    module: global.CipherLabReviewer.filename,
   };
-  const topics = [
-    { id: 'access', name: 'Access control', reference: 'Reviewer §1, pp. 2–3 · IM Unit I, pp. 13–20, 29–37' },
-    { id: 'firewalls', name: 'Firewalls', reference: 'Reviewer §2, p. 4 · IM Unit I, pp. 20–28' },
-    { id: 'remote', name: 'Protecting remote connections', reference: 'Reviewer §3, pp. 4–5 · Added details for the Unit I topic named on IM p. 13' },
-    { id: 'controls', name: 'Security controls', reference: 'Reviewer §4, p. 5 · Technical controls in IM Unit I; general classifications are added context' },
-    { id: 'idps', name: 'Intrusion detection & prevention', reference: 'Reviewer §5, pp. 5–6 · IM Unit II, pp. 43–77' },
-    { id: 'honeypots', name: 'Honeypots & honeynets', reference: 'Reviewer §6, p. 6 · IM Unit II, pp. 77–81' },
-    { id: 'scanning', name: 'Scanning & analysis tools', reference: 'Reviewer §7, pp. 6–7 · IM Unit II, pp. 81–94' },
-    { id: 'biometrics', name: 'Biometric access control', reference: 'Reviewer §8, p. 7 · IM Unit II, pp. 95–98' },
-    { id: 'cryptography', name: 'Cryptography & the four ciphers', reference: 'Reviewer §§9–14, pp. 7–10 · IM Unit III, pp. 101–111' },
-  ];
+  const topics = global.CipherLabReviewer.topics.map(topic => ({
+    ...topic, reference: global.CipherLabReviewer.source(topic.id),
+  }));
   const cards = [];
   function card(topic, question, options, explanation, added = false) {
     // Rotate the source choices as well as shuffling them when a quiz is created.
@@ -110,13 +101,13 @@
     ['Deny direct public database access; allow only the required application path', 'Allow every Internet host to query it', 'Trust all traffic because NAT is enabled', 'Disable logging to simplify rules'],
     'Expose only required service paths. Public web access does not imply public access to the database.');
 
-  // Remote connections — 8 cards; the reviewer labels the protocol detail as added context.
+  // Remote connections — 8 cards; protocol details are supplemental to the PDF.
   card('remote', 'What does remote access allow a user to do?',
     ['Reach organizational resources from another network or location', 'Bypass all authorization checks', 'Avoid identity verification permanently', 'Replace the local operating system'],
     'Remote access extends connectivity beyond the local network and still requires identity, permission and transport safeguards.', true);
   card('remote', 'Which combination best protects a remote administrative connection?',
     ['MFA, restricted privileges, encrypted transport and useful logs', 'A shared password and unlimited access', 'No session timeout or event records', 'Public exposure of every management service'],
-    'The reviewer adds layered remote-access safeguards: verify identity, limit rights, protect communications and retain evidence.', true);
+    'These added remote-access safeguards verify identity, limit rights, protect communications and retain evidence.', true);
   card('remote', 'What is the main purpose of a securely configured VPN?',
     ['Provide a protected communication channel over another network', 'Guarantee that every endpoint is malware-free', 'Replace all permissions', 'Publish a private network to everyone'],
     'A VPN protects the channel; endpoint condition and access permissions need separate controls.', true);
@@ -151,7 +142,7 @@
     'Defense in depth combines complementary safeguards so protection does not depend on one barrier.');
   card('controls', 'A written security policy and employee training are primarily which implementation category?',
     ['Administrative controls', 'Physical controls only', 'Ciphertext', 'Address translation'],
-    'Administrative controls include policies, procedures and training. The reviewer marks this classification as added study context.', true);
+    'Administrative controls include policies, procedures and training. This classification is added study context.', true);
   card('controls', 'Which example is a physical safeguard?',
     ['A locked server-room door', 'A password-complexity rule alone', 'A packet-filter ACL alone', 'A hash formula'],
     'Locks and barriers protect physical access. Control-category detail is added study context.', true);
@@ -279,7 +270,7 @@
     'A fingerprint is a measurable physical characteristic, unlike a knowledge or possession authenticator.');
   card('biometrics', 'Which is a behavioral biometric example?',
     ['Keystroke rhythm', 'A static password string', 'A network port', 'A smart card serial number'],
-    'Keystroke rhythm concerns how a person performs an action rather than a memorized secret.');
+    'BONUS example: keystroke rhythm concerns how a person performs an action. The PDF’s biometrics section focuses on physiological examples.', true);
   card('biometrics', 'What does enrollment establish for later biometric comparisons?',
     ['A reference template derived from the user’s captured features', 'A public one-time pad', 'A firewall state table', 'A transposition key'],
     'Enrollment creates the reference against which later samples are compared.');
@@ -302,7 +293,7 @@
     ['An impostor is falsely accepted', 'A legitimate user is falsely rejected', 'A valid user is correctly accepted', 'A password is changed successfully'],
     'The revised module, p. 95, labels a false accept Type II. This represents an unauthorized admission.');
 
-  // Cryptography and the pictured four ciphers — 14 cards.
+  // Cryptography and the four practice ciphers — 14 cards.
   card('cryptography', 'Which description correctly distinguishes plaintext from ciphertext?',
     ['Plaintext is the readable input; ciphertext is the encrypted output', 'Plaintext is always a hash; ciphertext is always a password', 'Both must be numeric port lists', 'Ciphertext is the secret key itself'],
     'Encryption transforms plaintext into ciphertext using an algorithm and key.');
@@ -324,9 +315,9 @@
   card('cryptography', 'What property is preserved by a pure transposition cipher?',
     ['The symbols and their occurrence counts', 'Every symbol’s original position', 'Only the vowels', 'A fixed hash digest'],
     'Rearrangement preserves the original symbols and frequencies even though their positions change.');
-  card('cryptography', 'Write CATDOG across rows of 3 columns, then read down columns from left to right. What is the result?',
-    ['CDAOTG', 'CATDOG', 'TACGOD', 'CDTAOG'],
-    'The rows are CAT and DOG. The columns read CD, AO and TG. This grid is an added exercise, not the module’s binary permutation.', true);
+  card('cryptography', 'Using the PDF’s key 1→4, 2→8, 3→1, 4→5, 5→7, 6→2, 7→6, 8→3, what is ABCDEFGH with positions numbered right to left?',
+    ['GDBEHACF', 'ABCDEFGH', 'HGFEDCBA', 'BADCFEHG'],
+    'PDF p. 107 gives the eight-position permutation and right-to-left binary numbering, also used explicitly for these letters. The H at position 1 moves to position 4; all eight moves give GDBEHACF.');
   card('cryptography', 'Which letter values are used in the course’s Vernam arithmetic?',
     ['A=1 through Z=26', 'A=0 through Z=25', 'A=2 through Z=27', 'Only ASCII values'],
     'The module’s worked Vernam example adds letter positions in the range 1–26.');
@@ -343,8 +334,198 @@
     ['Repeat it over letters; spaces do not consume key positions', 'Use it once and discard the remaining plaintext', 'Advance it only at spaces', 'Always use A=1 instead'],
     'The added worksheet uses A=0 through Z=25 and repeats the keyword over message letters, ignoring spaces for alignment.', true);
   card('cryptography', 'Which statement correctly describes a cryptographic hash?',
-    ['It produces a fixed-length digest and is not decrypted back into the input', 'It is a transposition with a secret column count', 'It always produces a unique output for every possible input', 'It is the same operation as Vigenère encryption'],
+    ['It produces a fixed-length digest and is not decrypted back into the input', 'It is a permutation with a secret position key', 'It always produces a unique output for every possible input', 'It is the same operation as Vigenère encryption'],
     'A hash maps inputs to a fixed-length digest. It is not reversible encryption, and collisions are possible.');
+
+  // Unit I implementation and governance — 10 additional cards.
+  card('implementation', 'Which list contains all six information-system components discussed in Unit I?',
+    ['Software, hardware, data, people, procedures and networks', 'Only routers and firewalls', 'Only keys, certificates and hashes', 'Only programs and processors'],
+    'The module treats an information system as technical assets together with the people, procedures and networks that make them useful.');
+  card('implementation', 'Who initiates a top-down security implementation?',
+    ['Upper management with policy, goals and resources', 'Only a volunteer technician', 'An external attacker', 'Only the firewall vendor'],
+    'Top-down implementation begins with management support, accountability, a champion and dedicated resources.');
+  card('implementation', 'Why can an unsupported bottom-up security effort struggle?',
+    ['It can lack authority, funding and organizational staying power', 'It always has too much executive support', 'It eliminates technical expertise', 'It requires no maintenance'],
+    'Unit I explains that technical initiative alone can lack the management support needed to sustain an organization-wide program.');
+  card('implementation', 'Which SDLC phase defines the problem, scope and initial feasibility?',
+    ['Investigation', 'Maintenance and change', 'Final decryption', 'Physical disposal only'],
+    'Investigation establishes the problem, objectives, constraints and scope before the later design and implementation phases.');
+  card('implementation', 'Which SecSDLC phase studies current threats, policies and risk?',
+    ['Analysis', 'Output transformation', 'Certificate revocation', 'Implementation only'],
+    'The analysis phase examines existing policies, current threats, relevant legal requirements and organizational risk.');
+  card('implementation', 'Where does the SecSDLC develop its security blueprint and continuity plans?',
+    ['Logical design', 'Only maintenance', 'Only procurement', 'Only account deletion'],
+    'Logical design creates the blueprint and plans for incident response, business continuity and disaster recovery.');
+  card('implementation', 'Evaluating specific security products against the blueprint belongs to which phase?',
+    ['Physical design', 'Identification', 'Ciphertext analysis', 'Initial investigation only'],
+    'Physical design evaluates actual technologies and physical safeguards that can implement the logical design.');
+  card('implementation', 'Which phase acquires, tests and deploys security solutions and trains staff?',
+    ['Implementation', 'Collision search', 'Passive eavesdropping', 'Key revocation only'],
+    'Implementation puts the chosen solution into operation, tests it and addresses the personnel training needed to use it.');
+  card('implementation', 'Why does the SecSDLC continue into maintenance and change?',
+    ['Threats, systems and organizational needs keep changing', 'A deployed system cannot be altered', 'Testing ends every security risk', 'Policies are never revised'],
+    'Maintenance adapts the security program as threats and systems evolve; deployment is not the end of the lifecycle.');
+  card('implementation', 'A data owner decides protection requirements. What does a data custodian do?',
+    ['Administers the safeguards that implement those requirements', 'Automatically owns all business data', 'Replaces all end users', 'Publishes every private key'],
+    'Owners decide the required protection; custodians implement and administer technical safeguards while users follow approved practices.');
+
+  // Unit IV symmetric systems, hashes and MACs — 15 additional cards.
+  card('symmetric', 'What does a symmetric block cipher process at a time?',
+    ['A fixed-size block using a shared secret key', 'A certificate authority only', 'An entire keyspace without a key', 'Only a public-key signature'],
+    'Unit IV describes block ciphers as transforming fixed-size data blocks through keyed functions, with inverse processing for decryption.');
+  card('symmetric', 'What are the DES block size and effective secret-key size?',
+    ['64-bit block and 56 effective key bits', '128-bit block and 256 effective key bits', '56-bit block and 48 effective key bits', '64-bit block and no secret key'],
+    'DES uses 64-bit blocks and 56 effective key bits. The PDF also mentions 48-bit round keys; those are not the master-key length.');
+  card('symmetric', 'How many Feistel rounds does DES use?',
+    ['16', '8', '10', '64'],
+    'The DES discussion on PDF pp. 116–117 describes 16 Feistel rounds between the initial and final permutations.');
+  card('symmetric', 'Which operation order describes the common Triple DES construction?',
+    ['Encrypt, decrypt, encrypt with the selected keys', 'Hash, compress, delete', 'Only one DES encryption', 'Public-key sign, verify, sign'],
+    'Triple DES applies the DES primitive three times, commonly using an encrypt–decrypt–encrypt construction. It is studied here as a historical design.');
+  card('symmetric', 'According to the detailed IDEA section, what are its block and key sizes?',
+    ['64-bit block and 128-bit key', '128-bit block and 28-bit key', '32-bit block and 56-bit key', '8-bit block with no key'],
+    'PDF p. 119 gives a 64-bit input and a 128-bit key. The earlier 28-bit key wording is a typo, not the value used by the detailed explanation.');
+  card('symmetric', 'How is the IDEA processing structure described in Unit IV?',
+    ['Eight rounds followed by an output transformation', 'One Caesar shift only', 'Sixteen public-key exchanges', 'A certificate trust chain'],
+    'IDEA applies eight rounds, using six subkeys per round, followed by an output transformation using four further subkeys.');
+  card('symmetric', 'Which operations are central to RC5?',
+    ['XOR, addition and data-dependent rotations', 'Only certificate signing', 'Only letter counting', 'Only a fixed alphabet replacement'],
+    'The RC5 discussion uses XOR, modular addition and circular rotations, with configurable parameters such as rounds and key length.');
+  card('symmetric', 'What is the AES block size regardless of the selected AES key length?',
+    ['128 bits', '56 bits', '64 bits', '256 bits for every key'],
+    'AES processes 128-bit blocks. Its supported key lengths are 128, 192 and 256 bits, distinct from its block size.');
+  card('symmetric', 'How many rounds correspond to AES keys of 128, 192 and 256 bits?',
+    ['10, 12 and 14 rounds', '8, 8 and 8 rounds', '16, 16 and 16 rounds', '128, 192 and 256 rounds'],
+    'Added standard parameter detail: AES uses 10, 12 or 14 rounds for 128-, 192- or 256-bit keys. The PDF overview discusses key-dependent rounds without listing these counts.', true);
+  card('symmetric', 'Which AES transformation combines the state with a round key using XOR?',
+    ['AddRoundKey', 'ShiftRows', 'Certificate revocation', 'Diffie–Hellman'],
+    'AddRoundKey XORs the state with round-key material; SubBytes, ShiftRows and MixColumns perform different transformations.');
+  card('symmetric', 'Which mode encrypts blocks independently and can expose repeated plaintext-block patterns?',
+    ['ECB', 'CBC', 'CFB', 'OFB'],
+    'Electronic Codebook treats each block independently under one key, so repeated identical blocks produce repeated ciphertext blocks.');
+  card('symmetric', 'In CBC encryption, what is combined with the first plaintext block?',
+    ['An initialization vector', 'The recipient’s private signing key', 'A CRL entry', 'A biometric template'],
+    'CBC uses an IV for the first block, then uses each preceding ciphertext block when processing the next plaintext block.');
+  card('symmetric', 'Which mode encrypts successive counter values to create material XORed with plaintext?',
+    ['CTR', 'ECB', 'A substitution alphabet', 'A trust chain'],
+    'Counter mode generates a keystream from encrypted counter values and combines it with plaintext using XOR.');
+  card('symmetric', 'What distinguishes a message authentication code from an ordinary unkeyed hash?',
+    ['A MAC uses a shared secret key', 'A MAC always hides the plaintext', 'A MAC never checks integrity', 'A MAC is necessarily a public certificate'],
+    'The module’s MAC process uses a message and secret key to create a tag that the receiver recomputes with the same key.');
+  card('symmetric', 'Why does a shared-key MAC fail to provide third-party non-repudiation?',
+    ['Both key holders can generate valid tags', 'It has no output', 'It always uses a public key', 'It automatically publishes the message'],
+    'Because sender and receiver share the secret, a third party cannot uniquely attribute a valid MAC to one of them.');
+
+  // Unit V public-key systems and signatures — 15 additional cards.
+  card('public-key', 'For public-key confidentiality, which key encrypts for a recipient?',
+    ['The recipient’s public key', 'The sender’s public key in every case', 'The recipient’s private key', 'The certificate database password'],
+    'The sender encrypts for the recipient’s public key, and the corresponding private key is used to decrypt.');
+  card('public-key', 'In the RSA classroom construction, how is n calculated?',
+    ['Multiply the two selected primes p and q', 'Add the two public exponents', 'Hash the plaintext', 'Multiply every letter frequency'],
+    'RSA key generation starts with distinct primes and forms the modulus n=pq for the public and private keys.');
+  card('public-key', 'For p=7 and q=13, what is the RSA modulus?',
+    ['91', '72', '20', '29'],
+    'The PDF’s RSA example multiplies 7 by 13 to obtain n=91. The value 72 is its totient, not its modulus.');
+  card('public-key', 'For distinct RSA primes p=7 and q=13, what is φ(n)?',
+    ['72', '91', '20', '145'],
+    'The totient is (p−1)(q−1)=6×12=72, which is used to select the public and private exponents.');
+  card('public-key', 'What condition must RSA’s public exponent e satisfy in the module’s construction?',
+    ['It is relatively prime to φ(n)', 'It must equal p', 'It must equal n', 'It must be the plaintext length'],
+    'The public exponent must have a multiplicative inverse modulo φ(n), which requires gcd(e,φ(n))=1.');
+  card('public-key', 'Why is d=29 suitable when e=5 and φ(n)=72?',
+    ['5×29 leaves remainder 1 modulo 72', '5+29 equals 72', '29 is the same as the modulus 91', 'Every odd number is automatically valid'],
+    'The exponent relationship is ed≡1 mod φ(n); 5×29=145=2×72+1 in the PDF example.');
+  card('public-key', 'Which expression is textbook RSA encryption for message number m?',
+    ['c=m^e mod n', 'c=m+e+n without reduction', 'c=hash(n) only', 'c=m^d without a modulus'],
+    'The numerical exercise applies the public exponent and reduces modulo n. Real implementations also need secure parameters and padding.');
+  card('public-key', 'In the PDF example n=91, e=5, what does message number 10 encrypt to?',
+    ['82', '10', '29', '72'],
+    '10^5 mod 91 is 82. The module then recovers 10 by computing 82^29 mod 91.');
+  card('public-key', 'What does a basic Diffie–Hellman exchange establish?',
+    ['A shared secret computed from each party’s private contribution', 'A signed certificate by itself', 'A decrypted document automatically', 'A public copy of both private exponents'],
+    'Diffie–Hellman lets both sides derive the same secret without directly sending it; basic unauthenticated exchange does not prove identity.');
+  card('public-key', 'Why do the two Diffie–Hellman computations agree?',
+    ['Both yield g^(ab) modulo p', 'Both reveal the private exponents', 'Both ignore all exchanged values', 'Both hash the same certificate serial'],
+    'Raising g^b to a or g^a to b gives the same modular value g^(ab), which forms the shared secret.');
+  card('public-key', 'What form does an ElGamal ciphertext take in the module?',
+    ['A pair of values (C1,C2)', 'A certificate serial number only', 'A single unkeyed hash always', 'A Caesar shift count only'],
+    'ElGamal encryption uses fresh randomness and produces two components; decryption uses the recipient’s private value.');
+  card('public-key', 'Why does ElGamal select a fresh random k for encryption?',
+    ['To randomize the encryption computation', 'To publish the private key', 'To eliminate the modulus', 'To replace the message with a certificate'],
+    'The random encryption value k contributes to both ciphertext components and should be freshly selected for the operation.');
+  card('public-key', 'What mathematical setting does elliptic-curve cryptography use?',
+    ['Operations on points of an elliptic curve', 'Only a 26-letter alphabet wheel', 'Only DES permutation tables', 'Only biometric fingerprints'],
+    'ECC defines operations on elliptic-curve points and uses related hard mathematical problems for public-key schemes.');
+  card('public-key', 'Which pair in Unit V consists of digital-signature schemes?',
+    ['DSA and Schnorr', 'ECB and CBC', 'NAT and PAT', 'FAR and FRR'],
+    'Unit V discusses the Digital Signature Algorithm and Schnorr signatures; these authenticate signed data rather than serving as block-cipher modes.');
+  card('public-key', 'Which key roles apply to a digital signature?',
+    ['Create with the private signing key; verify with the public key', 'Create with every user’s public key; verify with a password', 'Create without a key; decrypt with a hash', 'Create with an IV; verify with a port number'],
+    'A private signing key creates signatures, and the corresponding authenticated public key verifies them. Signing does not itself hide the message.');
+
+  // Unit VI PKI — 10 additional cards.
+  card('pki', 'What binding does a digital certificate establish?',
+    ['An identity to a public key', 'A private key to every anonymous visitor', 'A plaintext to one unique hash forever', 'An IP address to an AES round count'],
+    'A certificate is a signed assertion connecting identity information with a public key, subject to its validity and trust requirements.');
+  card('pki', 'Which PKI role signs and issues certificates?',
+    ['Certificate authority', 'Packet sniffer', 'Data-dependent rotation', 'Counter register'],
+    'A CA signs certificate assertions so relying parties can verify the issuer and the binding it makes.');
+  card('pki', 'What is a registration authority’s role?',
+    ['Verify the identity of certificate applicants', 'Decrypt all HTTPS messages', 'Store every user’s private key publicly', 'Choose every network route'],
+    'The RA checks applicant identity for the certification process; a CA may perform this role itself or use another authority.');
+  card('pki', 'What does a certificate repository store?',
+    ['Certificates and related metadata', 'Only plaintext passwords', 'Every session’s unencrypted traffic', 'Only random pad characters'],
+    'The PDF lists a database or repository for certificates and metadata such as validity periods as one component of PKI.');
+  card('pki', 'What is the purpose of validating a certificate trust chain?',
+    ['Connect the certificate through trusted issuers to a trusted root', 'Recover the signer’s private key', 'Remove every expiration date', 'Replace identity checking with encryption alone'],
+    'Validation checks the chain of issuer signatures and applicable constraints rather than trusting an arbitrary public key.');
+  card('pki', 'Which certificate format is discussed for PKI and secure email?',
+    ['X.509', 'ASCII-only Caesar', 'ECB', 'A raw one-time pad'],
+    'Unit VI describes X.509 certificates for common PKI uses, including S/MIME signed and encrypted email.');
+  card('pki', 'Can a certificate be unexpired and still revoked?',
+    ['Yes, for example after its private key is compromised', 'No, dates always override revocation', 'Only if it has no public key', 'Only when it uses a Caesar shift'],
+    'Revocation can invalidate a certificate before its scheduled expiration, especially when the associated private key is compromised.');
+  card('pki', 'What is a certificate revocation list?',
+    ['An issuer-signed list identifying revoked certificates', 'A public list of users’ private keys', 'A list of ciphertext letters', 'A tool that recovers forgotten passwords'],
+    'A CRL lists revoked certificate serial numbers and associated revocation information and is signed by the issuer.');
+  card('pki', 'Which mechanism requests a certificate’s status instead of downloading a complete CRL?',
+    ['OCSP', 'IDEA', 'PAT', 'TBAC'],
+    'The Online Certificate Status Protocol provides certificate status responses such as good, revoked or unknown.');
+  card('pki', 'What happens with OCSP stapling?',
+    ['The server supplies an authority-signed status response with its certificate exchange', 'The browser publishes its private key', 'The CA encrypts every web page', 'The certificate never expires'],
+    'Stapling lets the server supply a signed status response, reducing separate client requests to the status responder.');
+
+  // Unit VII attacks and defenses — 10 additional cards.
+  card('attacks', 'Which situation is a passive attack?',
+    ['Eavesdropping without modifying the communication', 'Deleting a stored message', 'Injecting forged authentication', 'Blocking a service'],
+    'Passive attacks observe or collect information while leaving the communication and information unchanged.');
+  card('attacks', 'Which action is an active attack?',
+    ['Altering a message or denying access to a service', 'Only listening to a transmission', 'Only reading a public manual', 'Only counting public algorithm names'],
+    'Active attacks modify, inject, delete or disrupt information or access, rather than only observing it.');
+  card('attacks', 'What does a brute-force key search do?',
+    ['Test candidate keys systematically', 'Guarantee instant decryption of every cipher', 'Require the private key beforehand', 'Only revoke certificates'],
+    'Brute force searches the keyspace; its feasibility depends on the keyspace, resources and implementation.');
+  card('attacks', 'What evidence does a known-plaintext attack use?',
+    ['Known plaintext together with its corresponding ciphertext', 'Only a list of revoked certificates', 'Only a firewall state table', 'Only an unrelated password'],
+    'A known-plaintext attacker has message and ciphertext pairs that can expose information about the target cryptosystem.');
+  card('attacks', 'What distinguishes the module’s selected-plaintext attack?',
+    ['The attacker obtains encryption of chosen message content', 'The attacker never knows any plaintext', 'The attack must use a physical door', 'The attack only changes a CRL'],
+    'Selected-plaintext, often called chosen-plaintext, involves obtaining encrypted results for attacker-selected message content.');
+  card('attacks', 'How can a man-in-the-middle attack undermine an unauthenticated key exchange?',
+    ['Substitute keys and relay separate conversations with each party', 'Always factor every large modulus instantly', 'Delete the existence of encryption', 'Turn every ciphertext into a unique digest'],
+    'An attacker can replace key material and relay communication. The identity of exchanged public keys must be authenticated.');
+  card('attacks', 'What does a correlation attack seek?',
+    ['Statistical relationships involving key structure and ciphertext', 'Only a physical keycard serial number', 'Only a certificate’s expiry date', 'Only the name of a firewall vendor'],
+    'The module describes correlation methods as searching for useful statistical relationships in cryptographic data.');
+  card('attacks', 'What does a dictionary attack test?',
+    ['Likely words or candidate secrets against a target verification value', 'Only every possible network cable', 'Only the dates in a certificate', 'Only binary transposition positions'],
+    'Dictionary attacks try likely secrets, for example by computing candidate password-verification values and comparing them with stolen values.');
+  card('attacks', 'Which attack analyzes variations in observed processing or interaction time?',
+    ['Timing attack', 'Certificate issuance', 'CBC chaining', 'Biometric enrollment'],
+    'Timing attacks infer sensitive information from observable timing behavior rather than directly reading the secret key.');
+  card('attacks', 'Why should an organization plan authorized key recovery?',
+    ['Lost passphrases or departed staff can otherwise make encrypted data unavailable', 'Every strong cipher is instantly reversible without a key', 'Public certificates contain all private keys', 'Recovery eliminates the need to protect keys'],
+    'The Unit VII case study shows that effective encryption must be accompanied by controlled key management and recovery planning.');
 
   global.CipherLabStudyBank = { sources, topics, cards };
 })(window);

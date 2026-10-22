@@ -1,24 +1,38 @@
-/* Study content summarized from the supplied INTE 401 reviewer, October 2026. */
+/* Study content summarized from the supplied 162-page INTE 401 instructional material. */
 (function (global) {
   'use strict';
-  const filename = 'INTE_401_Information_Assurance_Security_2_Reviewer.pdf';
+  const filename = '_IM_INTE-401-IASv2026 (1).pdf';
+  const units = [
+    { id: 'I', name: 'Security technology & implementation', pages: '13–41' },
+    { id: 'II', name: 'Detection, assessment & biometrics', pages: '43–100' },
+    { id: 'III', name: 'Cryptography', pages: '101–114' },
+    { id: 'IV', name: 'Symmetric cryptography', pages: '115–130' },
+    { id: 'V', name: 'Asymmetric public-key cryptosystems', pages: '131–142' },
+    { id: 'VI', name: 'Public key infrastructure', pages: '144–152' },
+    { id: 'VII', name: 'Attacks on cryptosystems', pages: '154–161' },
+  ];
   const topics = [
-    { id: 'access', name: 'Access control', section: '1', pages: '2–3' },
-    { id: 'firewalls', name: 'Firewalls & network protection', section: '2', pages: '3–4' },
-    { id: 'remote', name: 'Remote connections', section: '3', pages: '5' },
-    { id: 'controls', name: 'Security controls', section: '4', pages: '5–6' },
-    { id: 'idps', name: 'Intrusion detection & prevention', section: '5', pages: '6–7' },
-    { id: 'honeypots', name: 'Honeypots & honeynets', section: '6', pages: '7' },
-    { id: 'scanning', name: 'Scanning & analysis tools', section: '7', pages: '7–8' },
-    { id: 'biometrics', name: 'Biometric access control', section: '8', pages: '8' },
-    { id: 'cryptography', name: 'Cryptography', section: '9–13', pages: '8–11' },
+    { id: 'access', name: 'Access control', unit: 'I', pages: '14–20' },
+    { id: 'firewalls', name: 'Firewalls & network protection', unit: 'I', pages: '20–28' },
+    { id: 'remote', name: 'Remote connections', unit: 'I', pages: '13, 17–19', context: 'Remote access and VPN objectives; protocol details are supplemental' },
+    { id: 'controls', name: 'Security controls', unit: 'I', pages: '13–20, 29–35', context: 'General control classifications are supplemental' },
+    { id: 'idps', name: 'Intrusion detection & prevention', unit: 'II', pages: '43–77' },
+    { id: 'honeypots', name: 'Honeypots & honeynets', unit: 'II', pages: '77–81' },
+    { id: 'scanning', name: 'Scanning & analysis tools', unit: 'II', pages: '81–94' },
+    { id: 'biometrics', name: 'Biometric access control', unit: 'II', pages: '95–98' },
+    { id: 'cryptography', name: 'Cryptography & classical ciphers', unit: 'III', pages: '101–111' },
+    { id: 'implementation', name: 'Security implementation & governance', unit: 'I', pages: '29–39' },
+    { id: 'symmetric', name: 'Symmetric ciphers, hashes & MACs', unit: 'IV', pages: '115–128' },
+    { id: 'public-key', name: 'Public-key cryptosystems & signatures', unit: 'V', pages: '131–140' },
+    { id: 'pki', name: 'Public key infrastructure', unit: 'VI', pages: '144–150' },
+    { id: 'attacks', name: 'Attacks on cryptosystems', unit: 'VII', pages: '154–159' },
   ];
   const source = (id) => {
     const topic = topics.find((item) => item.id === id);
-    return `Reviewer §${topic.section}, pp. ${topic.pages}`;
+    return `${filename} · Unit ${topic.unit}, PDF pp. ${topic.pages}${topic.context ? ` · ${topic.context}` : ''}`;
   };
-  const lesson = (id, name, summary, bullets, formula, example, trap) => ({
-    id, name, topic: id, source: `CORE · ${source(id)}`, level: 'CORE',
+  const lesson = (id, name, summary, bullets, formula, example, trap, topic = id) => ({
+    id, name, topic, source: `CORE · ${source(topic)}`, level: 'CORE',
     summary, bullets, formula, example, trap,
   });
   const lessons = [
@@ -29,7 +43,8 @@
         'Authentication factors: something you know (password), have (security key), or are (fingerprint). Two passwords still use one factor category.',
         'DAC: resource owner decides. MAC: central clearance/classification policy. RBAC: job role. TBAC: temporary task. ABAC: subject, object and context attributes.',
         'Least privilege grants only necessary rights. Separation of duties assigns sensitive steps to different people.',
-        'The reviewer marks theoretical-model depth as BONUS: Bell-LaPadula protects confidentiality; Biba protects integrity; Clark-Wilson uses controlled transactions; Brewer-Nash addresses conflicts of interest.',
+        'The module defines ACLs by resource, capabilities tables by subject, and a matrix that combines both views. The trusted computing base and reference monitor enforce access.',
+        'BONUS theoretical models: Bell-LaPadula protects confidentiality; Biba protects integrity; Clark-Wilson uses controlled transactions; Brewer-Nash addresses conflicts of interest. These named models are outside this PDF.',
       ],
       'IDENTIFY → AUTHENTICATE → AUTHORIZE → ACCOUNT\nDAC = owner; MAC = classification; RBAC = role\nTBAC = task; ABAC = attributes',
       'A clerk can sign in but cannot approve payroll: authentication succeeded; authorization denies the action.',
@@ -41,6 +56,7 @@
         'Stateful inspection adds a connection-state table. An application proxy intermediates application requests.',
         'Default deny rejects traffic without an explicit allow rule. ACLs describe which traffic is allowed or denied.',
         'A DMZ separates public services from the internal LAN. A bastion host is hardened; a dual-homed host has two network interfaces.',
+        'A screened host combines a filtering router and a dedicated bastion/proxy. A screened subnet isolates services on a dedicated segment. Application, MAC-layer and hybrid firewalls inspect different kinds of context.',
         'NAT translates addresses; PAT distinguishes shared-public-IP sessions using ports. Translation alone is not a complete security control.',
         'Historical blanket rules in the module need context: required outbound traffic and ICMP should be evaluated against a least-privilege policy.',
       ],
@@ -48,24 +64,24 @@
       'Permit public HTTPS to the web tier, allow only necessary application-to-database traffic, and deny public database access.',
       'A stateful firewall tracks connections; NAT/PAT describes address and port translation.'),
     lesson('remote', 'Protecting remote connections',
-      'Remote access extends connectivity beyond the local network. Protect it with verified identity, restricted permissions, secure communication and useful logs.',
+      'Unit I names remote and dial-up authentication and VPNs as learning objectives. Its identity, authentication and authorization mechanisms provide the foundation; the protocol details below are added study context.',
       [
-        'Layer MFA, device checks, least privilege, session timeouts and logging to address stolen credentials and unmanaged devices.',
-        'RADIUS centralizes authentication, authorization and accounting (AAA), commonly for network access.',
-        'TACACS+ provides centralized AAA and can support granular network-device command authorization.',
-        'Kerberos uses a Key Distribution Center (KDC) and tickets: first a ticket-granting ticket, then a service ticket.',
-        'A remote-access VPN connects a user/device to a private network; a site-to-site VPN connects networks.',
+        'The PDF covers knowledge, possession and biometric factors; strong authentication combines different factor categories.',
+        'The PDF distinguishes synchronous tokens, which require server calibration, from asynchronous tokens, which do not.',
+        'BONUS: RADIUS centralizes authentication, authorization and accounting (AAA), commonly for network access.',
+        'BONUS: TACACS+ can support granular network-device command authorization; Kerberos uses a KDC and tickets.',
+        'BONUS VPN detail: remote access connects a user/device; site-to-site connects networks. Device checks and session timeouts add protection.',
       ],
       'KERBEROS: authenticate → TGT → service ticket → service\nREMOTE ACCESS: user/device ↔ private network\nSITE TO SITE: network ↔ network',
       'An administrator connects through a VPN, proves identity with MFA and receives only the management rights required for the job.',
       'A VPN supplies a tunnel; RADIUS and TACACS+ supply AAA services. They solve different parts of remote access.'),
     lesson('controls', 'Security controls & defense in depth',
-      'Security controls protect confidentiality, integrity and availability. The reviewer adds a BONUS classification by implementation and function to support scenario questions.',
+      'Security controls protect information through policies, people, processes and technology. General control-function classifications below are supplemental context; the PDF discusses technical controls and security design.',
       [
         'Confidentiality restricts disclosure; integrity protects trustworthy data; availability keeps services usable when needed.',
-        'Implementation categories: administrative policies and procedures, technical safeguards, and physical safeguards.',
-        'Preventive controls reduce incident likelihood; detective controls reveal events; corrective controls repair after detection.',
-        'Recovery controls restore service; deterrent controls discourage misuse; compensating controls provide an alternative safeguard.',
+        'BONUS implementation categories: administrative policies and procedures, technical safeguards, and physical safeguards.',
+        'BONUS functions: preventive controls reduce incident likelihood; detective controls reveal events; corrective controls repair after detection.',
+        'BONUS functions: recovery restores service; deterrence discourages misuse; compensation supplies an alternative safeguard.',
         'Defense in depth combines complementary controls so that different failure modes have different safeguards.',
       ],
       'CIA = CONFIDENTIALITY + INTEGRITY + AVAILABILITY\nPREVENT → DETECT → CORRECT → RECOVER\nControl-function taxonomy: BONUS explanation',
@@ -79,6 +95,9 @@
         'Signature detection matches known patterns; anomaly detection finds baseline deviations; stateful protocol analysis checks valid protocol behavior.',
         'True positive: attack alerted. False negative: attack missed. False positive: harmless activity alerted. True negative: harmless activity correctly ignored.',
         'Tuning adjusts rules and thresholds; clustering groups similar alerts; filtering suppresses or classifies selected alerts. Placement affects visibility.',
+        'Wireless IDPS monitors WLAN activity; network behavior analysis detects unusual flows. SIEM correlates logs across systems.',
+        'Centralized management uses one control point; distributed management uses local control; partially distributed management combines local response and central reporting.',
+        'Compare throughput, missed attacks, false alarms, maintenance effort and total cost. Test deployment and tune thresholds or clipping levels.',
       ],
       '                 ALERT          NO ALERT\nATTACK           True positive  False negative\nNO ATTACK        False positive True negative',
       'A routine backup triggers an attack alarm: false positive. An actual intrusion with no alarm: false negative.',
@@ -101,6 +120,7 @@
         'Footprinting gathers publicly visible organizational information; fingerprinting identifies technologies, operating systems or service versions.',
         'Port scanners discover reachable services; vulnerability scanners identify evidence of known weaknesses or misconfiguration.',
         'Packet/protocol analyzers inspect captured traffic. Wireless analyzers examine the wireless environment.',
+        'Firewall analysis tests filtering paths; OS detection identifies likely platforms; fuzzers send varied or malformed inputs to expose unexpected behavior.',
         'Active scanning sends probes; passive analysis observes existing traffic or configuration without initiating network probes.',
         'Define authorization, targets and a test window; scan conservatively, validate findings, prioritize, remediate and rescan.',
       ],
@@ -121,6 +141,97 @@
       'The enrolled employee is refused access: false reject (FRR). An impostor is admitted: false accept (FAR).',
       'A biometric template is sensitive identity data. Raising the match threshold involves a security/usability trade-off.'),
   ];
+  lessons.push(
+    lesson('implementation', 'Information systems & security programs',
+      'Unit I treats information security as an organizational program. Its information system includes people and procedures as well as technical assets.',
+      ['The six components are software, hardware, data, people, procedures and networks.',
+       'A bottom-up effort starts with technical staff; it can lack authority, funding and lasting organizational support.',
+       'A top-down effort starts with management policy, a champion, goals, resources and accountability.',
+       'Security requires technical reasoning, practical judgment and an understanding of human behavior.'],
+      'SOFTWARE + HARDWARE + DATA + PEOPLE + PROCEDURES + NETWORKS\nMANAGEMENT → POLICY → RESOURCES → IMPLEMENTATION',
+      'A management sponsor funds a coordinated security program instead of leaving each administrator to make isolated decisions.',
+      'Buying technology does not by itself create an effective security program.'),
+    lesson('development', 'SDLC & the security development cycle',
+      'The module uses six phases for designing, implementing and maintaining information systems and their security controls.',
+      ['Investigation defines the problem, objectives, scope, constraints and feasibility.',
+       'Analysis studies the current system, threats, policies, legal requirements and risk.',
+       'Logical design creates the security blueprint, including incident response, continuity and recovery plans.',
+       'Physical design evaluates specific technologies and physical safeguards against the blueprint.',
+       'Implementation acquires, tests and deploys solutions and trains people; maintenance and change adapt the controls over time.'],
+      'INVESTIGATE → ANALYZE → LOGICAL DESIGN → PHYSICAL DESIGN → IMPLEMENT → MAINTAIN',
+      'Choosing an actual firewall product belongs to physical design; defining the required segmentation belongs to logical design.',
+      'Maintenance continues after deployment. A finished installation is not a finished security program.', 'implementation'),
+    lesson('governance', 'Security roles & communities of interest',
+      'Security decisions require coordination among management, IT and information security, with clear responsibility for data.',
+      ['The CIO oversees organizational IT; the CISO leads information security assessment, management and implementation.',
+       'Data owners decide appropriate protection and access; custodians administer the technical safeguards; users follow the rules.',
+       'A security project team needs policy, risk, management, system administration and end-user perspectives.',
+       'IT, security and general management can have different priorities; align their decisions with organizational goals.'],
+      'OWNER: decides protection\nCUSTODIAN: implements safeguards\nUSER: follows approved use',
+      'A department owner approves access while a system administrator configures the permissions.',
+      'Responsibility for security extends beyond the security department.', 'implementation'),
+    lesson('symmetric', 'DES, IDEA, RC5 & AES',
+      'Unit IV studies block ciphers that encrypt fixed-size blocks with a shared secret, using repeated transformations and subkeys.',
+      ['DES uses a 64-bit block, 56 effective key bits and 16 Feistel rounds. Its round keys have 48 bits; these are not its master-key length.',
+       'Triple DES applies DES three times, commonly encrypt–decrypt–encrypt. Study DES and Triple DES as historical designs.',
+       'IDEA uses a 64-bit block, a 128-bit key, eight rounds and an output transformation. Its arithmetic mixes XOR, addition and multiplication.',
+       'RC5 uses rotations, XOR and addition, with configurable word size, key length and round count.',
+       'AES uses a 128-bit block. Learn SubBytes, ShiftRows, MixColumns and AddRoundKey. BONUS standard parameter detail: keys of 128, 192 or 256 bits give 10, 12 or 14 rounds respectively; the PDF overview does not list these counts.',
+       'Reading corrections: the PDF also says 48-bit DES keys and 28-bit IDEA keys. Its later DES discussion gives 56 effective bits, and p. 119 gives the 128-bit IDEA key. DES is symmetric despite the wording on p. 117.'],
+      'DES: block 64 | effective key 56 | rounds 16\nIDEA: block 64 | key 128 | rounds 8 + output\nAES: block 128 | keys 128/192/256 | rounds 10/12/14',
+      'An AES-256 key has 256 bits, but AES-256 still processes 128-bit blocks.',
+      'Block size, key size and round-key size are different quantities.'),
+    lesson('modes', 'Block-cipher modes of operation',
+      'A mode defines how a block cipher processes a message spanning multiple blocks. Unit IV compares ECB, CBC, CFB, OFB and CTR.',
+      ['ECB encrypts each block independently; identical plaintext blocks under one key produce identical ciphertext blocks.',
+       'CBC combines each plaintext block with the previous ciphertext block; the first block uses an initialization vector (IV).',
+       'CFB feeds ciphertext back through the cipher; OFB feeds the cipher output back to create a keystream.',
+       'CTR encrypts counter values and XORs the resulting keystream with the message.',
+       'An IV or counter is not the secret key. Its required uniqueness or unpredictability depends on the mode.'],
+      'CBC: C[i] = E(K, P[i] XOR C[i−1]); C[0] = IV\nCTR: C[i] = P[i] XOR E(K, counter[i])',
+      'Repeated visual blocks remain recognizable under ECB; chaining changes how later blocks are processed.',
+      'A mode of encryption does not automatically authenticate the message.', 'symmetric'),
+    lesson('mac', 'Hashes, message digests & authentication codes',
+      'A digest summarizes a message. A message authentication code (MAC) adds a shared secret so a receiver can check integrity and source possession of that secret.',
+      ['A hash has a fixed output length for arbitrary input; preimage, second-preimage and collision resistance address different searches.',
+       'The sender computes a tag from the message and secret key. The receiver recomputes the tag with the same key and compares.',
+       'An unkeyed hash alone does not authenticate a sender: an attacker who changes a message can also replace its unprotected digest.',
+       'A MAC does not encrypt the message. Both parties can create tags, so a shared-key MAC does not provide third-party non-repudiation.',
+       'MAC here means message authentication code; MAC in access control means mandatory access control.'],
+      'TAG = MAC(K, MESSAGE)\nRECEIVER: recompute → compare\nHASH ≠ ENCRYPTION ≠ MAC ≠ DIGITAL SIGNATURE',
+      'A valid tag establishes that a holder of the shared secret generated it; it cannot uniquely prove which key holder sent it.',
+      'Message authentication and message confidentiality are separate properties.', 'symmetric'),
+    lesson('public-key', 'RSA & public-key arithmetic',
+      'Unit V uses related public and private keys. Its RSA exercise demonstrates a modulus, a public exponent and a modular-inverse private exponent.',
+      ['Choose distinct primes p and q. Compute n=pq and φ(n)=(p−1)(q−1).',
+       'Choose e relatively prime to φ(n), then find d with ed ≡ 1 (mod φ(n)).',
+       'For the numerical exercise, encrypt c=m^e mod n; decrypt m=c^d mod n.',
+       'The PDF example uses p=7, q=13, n=91, e=5 and d=29. Its message 10 encrypts to 82 and decrypts back to 10.',
+       'The simulator uses tiny primes to expose the arithmetic. Its letter mapping and automatic exponent selection are classroom conventions. Real RSA requires secure parameters and padding.'],
+      'n = p × q; φ(n) = (p−1)(q−1)\ne × d ≡ 1 mod φ(n)\nc = m^e mod n; m = c^d mod n',
+      'For p=7 and q=13, φ(n)=72, and 5×29=145 leaves remainder 1 when divided by 72.',
+      'The PDF’s historical small-key discussion is not a deployment recommendation.'),
+    lesson('key-exchange', 'Diffie–Hellman, ElGamal, ECC & signatures',
+      'Unit V also introduces key agreement, encryption based on discrete logarithms, elliptic curves and signature systems.',
+      ['Diffie–Hellman exchanges g^a mod p and g^b mod p; each party computes the same shared value g^(ab) mod p.',
+       'Key agreement establishes a secret; it does not by itself authenticate the other party or encrypt a message.',
+       'ElGamal uses a public value y=g^x mod p and fresh randomness k for encryption, producing a pair (C1,C2).',
+       'ECC uses operations on elliptic-curve points. DSA and Schnorr are signature schemes discussed in the unit.',
+       'A signer uses a private key; a verifier uses the corresponding public key. A signature authenticates a message and detects alteration; it does not hide the message.'],
+      'DH: (g^b)^a mod p = (g^a)^b mod p\nElGamal: C1=g^k mod p; C2=m×y^k mod p\nSIGN: private key → VERIFY: public key',
+      'An authenticated public key lets a receiver verify a signature without knowing the signing key.',
+      'Signature verification is not the same operation as decrypting a confidential message.', 'public-key'),
+    lesson('pki', 'Certificates, trust & revocation',
+      'Unit VI describes the people, policies and systems that bind identities to public keys and maintain those bindings over time.',
+      ['A certificate authority (CA) signs certificates. A registration authority (RA) checks identity; a repository stores certificates and metadata.',
+       'A certificate binds an identity to a public key, with issuer, validity and other constraints. A certificate does not reveal the private key.',
+       'A trust chain links a certificate through issuing authorities to a trusted root. Validate the identity, signatures, time limits and relevant status.',
+       'A CRL is an issuer-signed list of revoked certificate serial numbers. OCSP answers certificate-status requests; stapling lets a server supply a signed status response.',
+       'Uses include HTTPS, user/device authentication and S/MIME email. Compromise can require revocation before scheduled expiry.'],
+      'IDENTITY CHECK (RA) → CERTIFICATE SIGNING (CA) → VALIDATION\nVALIDITY PERIOD ≠ REVOCATION STATUS\nCRL = signed list; OCSP = status response',
+      'A certificate within its date range can still be revoked after its private key is exposed.',
+      'A certificate is useful only when its identity and trust chain are validated.'),
+  );
   const questions = [];
   const question = (topic, q, a, c, exp, tag = 'CORE') =>
     questions.push({ topic, q, a, c, exp, tag, source: source(topic) });
@@ -139,7 +250,7 @@
     ['RBAC only', 'TBAC', 'NAT', 'HIDS'], 1, 'Task-based access control grants rights for a task or workflow step.');
   question('access', 'Which theoretical model uses “no read up, no write down” to protect confidentiality?',
     ['Biba', 'Clark-Wilson', 'Bell-LaPadula', 'Brewer-Nash'], 2,
-    'Bell-LaPadula restricts information flow to protect confidentiality. The reviewer labels this theoretical depth BONUS.', 'BONUS');
+    'Bell-LaPadula restricts information flow to protect confidentiality. This named theoretical model is supplemental to the PDF.', 'BONUS');
   question('access', 'Which theoretical model uses “no read down, no write up” to protect integrity?',
     ['Biba', 'Bell-LaPadula', 'DAC', 'Kerberos'], 0,
     'Biba protects high-integrity data from lower-integrity contamination. This is BONUS theoretical depth.', 'BONUS');
@@ -171,10 +282,10 @@
     'Availability concerns timely access to usable data and services.');
   question('controls', 'An audit alert identifies suspicious sign-ins. What function does it perform?',
     ['Recovery', 'Detective', 'Deterrent only', 'Corrective only'], 1,
-    'The alert detects an event. The reviewer labels this control-function taxonomy as supplemental exam preparation.', 'BONUS');
+    'The alert detects an event. This control-function taxonomy is supplemental study context.', 'BONUS');
   question('controls', 'Restoring a tested backup after an outage is primarily which control function?',
     ['Preventive', 'Identification', 'Deterrent', 'Recovery'], 3,
-    'Restoration recovers service after disruption; the function taxonomy is BONUS in the reviewer.', 'BONUS');
+    'Restoration recovers service after disruption; this function taxonomy is supplemental to the PDF.', 'BONUS');
   question('controls', 'What best illustrates defense in depth?',
     ['RBAC, MFA, segmentation, audit trails and backups together', 'One reused password everywhere', 'Disabling all logs', 'A firewall replacing every other safeguard'], 0,
     'Complementary safeguards address different failure modes instead of depending on one barrier.');
@@ -196,7 +307,7 @@
   question('honeypots', 'What distinguishes a honeynet from a honeypot?',
     ['It uses no monitoring', 'It contains a network of decoys', 'It is a biometric factor', 'It is a cryptographic key'], 1,
     'A honeynet combines decoy systems in a controlled network.');
-  question('honeypots', 'What is the purpose of a padded cell in the reviewer?',
+  question('honeypots', 'What is the purpose of a padded cell in the module?',
     ['Share production passwords', 'Replace all firewalls', 'Publish private keys', 'Isolate suspicious activity for observation'], 3,
     'A padded cell provides a contained environment for suspicious interactions.');
   question('honeypots', 'Why must a decoy environment be isolated from production?',
@@ -224,7 +335,16 @@
     ['Both error rates must vanish', 'More impostors are accepted', 'Templates are no longer needed', 'False accepts decrease while false rejects may increase'], 3,
     'A stricter match requirement usually improves rejection of impostors at a usability cost.');
 
-  // These cards are appended after the original cards so saved mastery indices remain valid.
+  // Protocol details are not explained in this PDF; retain them as added context.
+  questions.filter(item => item.topic === 'remote').forEach(item => { item.tag = 'BONUS'; });
+  question('remote', 'Which kind of authentication token requires calibration with the central server?',
+    ['Asynchronous token', 'Synchronous token', 'An unkeyed hash', 'A plaintext identifier'], 1,
+    'PDF p. 17 distinguishes synchronous tokens, which require calibration, from asynchronous tokens, which do not.');
+  question('remote', 'In the PDF, strong authentication combines mechanisms from how many different factor categories?',
+    ['At least two', 'Only one', 'None', 'Exactly four passwords'], 0,
+    'PDF p. 17 defines strong authentication using at least two mechanisms drawn from different factors.');
+
+  // The positions of these original cards must remain stable for saved mastery.
   const flashcards = [
     ['What does IAAA stand for?', 'Identification, authentication, authorization and accountability.'],
     ['Authentication vs authorization?', 'Authentication verifies identity; authorization checks permitted actions.'],
@@ -253,5 +373,36 @@
     ['What is CER/EER?', 'The operating point at which false acceptance and false rejection rates are equal.'],
     ['Which biometric errors are Type I and Type II in the course?', 'Type I: false reject. Type II: false accept.'],
   ];
-  global.CipherLabReviewer = { filename, topics, source, lessons, questions, flashcards };
+  // Appended after the original Playfair cards to preserve every existing mastery index.
+  const extraFlashcards = [
+    ['What are the PDF’s six information-system components?', 'Software, hardware, data, people, procedures and networks.'],
+    ['Top-down vs bottom-up security implementation?', 'Top-down starts with management policy and resources; bottom-up starts with technical staff and may lack lasting organizational support.'],
+    ['What are the six SecSDLC phases?', 'Investigation, analysis, logical design, physical design, implementation, maintenance and change.'],
+    ['Logical design vs physical design?', 'Logical design defines the security blueprint; physical design selects actual technologies and safeguards.'],
+    ['Data owner vs data custodian?', 'The owner sets protection requirements; the custodian implements and administers safeguards.'],
+    ['What does a CISO lead?', 'Information security assessment, management and implementation.'],
+    ['What is the PDF transposition key for sources 1 through 8?', 'Destinations: 4 8 1 5 7 2 6 3. Position 1 is at the right. Reverse the arrows to decrypt.'],
+    ['How do DES block, effective key and round-key sizes differ?', 'DES uses a 64-bit block, 56 effective secret-key bits and 48-bit round keys, over 16 rounds.'],
+    ['What are IDEA’s key and block sizes?', 'A 128-bit key and a 64-bit block, with eight rounds plus an output transformation.'],
+    ['What does RC5 combine?', 'XOR, modular addition and rotations, with configurable word size, key length and round count.'],
+    ['What are the AES block size and key choices?', '128-bit blocks. Added standard parameter detail: 128-, 192- or 256-bit keys, using 10, 12 or 14 rounds.'],
+    ['ECB vs CBC?', 'ECB encrypts blocks independently; CBC chains each plaintext block with the preceding ciphertext block, starting with an IV.'],
+    ['CFB vs OFB vs CTR?', 'CFB feeds back ciphertext; OFB feeds back cipher output; CTR encrypts counter values to form a keystream.'],
+    ['Hash vs MAC?', 'An ordinary hash is unkeyed; a message authentication code uses a shared secret to verify a tag.'],
+    ['Why is a MAC insufficient for non-repudiation?', 'Both holders of the shared secret can generate a valid tag.'],
+    ['What are RSA’s classroom equations?', 'n=pq; φ(n)=(p−1)(q−1); ed≡1 mod φ(n); c=m^e mod n; m=c^d mod n.'],
+    ['What does Diffie–Hellman establish?', 'A shared secret. Basic key agreement does not authenticate the parties.'],
+    ['What does ElGamal encryption output?', 'Two values (C1,C2), computed using the message, public parameters and fresh randomness.'],
+    ['What are DSA and Schnorr?', 'Digital-signature schemes: sign with a private key and verify with the corresponding public key.'],
+    ['CA vs RA?', 'The certificate authority signs certificates; the registration authority checks applicant identities.'],
+    ['What is a certificate trust chain?', 'Issuer signatures linking an identity/public-key certificate through authorities to a trusted root, subject to validation.'],
+    ['CRL vs OCSP?', 'A CRL is an issuer-signed list of revoked certificates; OCSP supplies individual certificate-status responses.'],
+    ['What is OCSP stapling?', 'A server supplies an authority-signed certificate-status response during the certificate exchange.'],
+    ['Passive vs active attacks?', 'Passive attacks observe; active attacks modify, inject, delete or disrupt.'],
+    ['Known-plaintext vs selected-plaintext?', 'Known-plaintext uses existing plaintext/ciphertext pairs; selected-plaintext obtains encryptions for chosen messages.'],
+    ['Dictionary vs timing attacks?', 'Dictionary attacks test likely secrets; timing attacks infer information from observable timing behavior.'],
+    ['What is a replay attack?', 'Resubmitting previously captured authentication or protocol messages to obtain an unauthorized effect. Decryption is not required.'],
+    ['Why plan key recovery?', 'Controlled recovery can preserve access after lost credentials or staff changes without exposing keys to unauthorized people.'],
+  ];
+  global.CipherLabReviewer = { filename, units, topics, source, lessons, questions, flashcards, extraFlashcards };
 })(typeof window === 'undefined' ? globalThis : window);
