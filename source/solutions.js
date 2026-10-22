@@ -285,7 +285,46 @@
       );
       finish();
     }
-    if (kind === 'transposition') {
+    if (kind === 'transposition' && result.method) {
+      const { columns, rows, keyword, ranks, lengths, normalized } = result;
+      const count = Array.from(normalized).length;
+      solution.source = global.CipherLabReviewer.filename + ' · BONUS · Numeric and keyword columnar practice extends the transposition concept in Unit III, PDF p. 107; the PDF’s eight-position permutation is a separate method';
+      solution.formula = decrypt
+        ? 'Split ciphertext by column lengths in key order → fill columns → read rows.'
+        : 'Write plaintext in rows → read columns top to bottom in key order.';
+      solution.legend = `${columns} columns, ${rows} rows. ${keyword ? 'Rank keyword letters alphabetically; break ties by their original left-to-right order.' : 'Numeric columns are read in their original left-to-right order.'} No padding is added.`;
+      step('Prepare the input', `${result.normalization} Normalized input: ${preview(normalized)}.`);
+      step(keyword ? 'Rank the keyword' : 'Number the columns', keyword ? `Keyword: ${keyword}. Ranks: ${ranks.join(' ')}. Keep repeated letters; each column receives its own rank.` : `Use columns 1 through ${columns} in left-to-right order.`, null, {
+        caption: 'Original column positions and read order', columns: ['Column', keyword ? 'Key letter' : 'Numeric label', 'Rank', 'Symbols'],
+        rows: ranks.map((rank, index) => [index + 1, keyword ? keyword[index] : index + 1, rank, lengths[index]]),
+      });
+      if (decrypt) {
+        step('Calculate unequal column lengths', `${count} = ${Math.floor(count / columns)} × ${columns} + ${count % columns}. Give each column ${Math.floor(count / columns)} symbols, then give one extra to the first ${count % columns} columns in the original grid. The extra symbols do not follow alphabetical rank.`, `Lengths left to right: ${lengths.join(', ')}`);
+        step('Split ciphertext and fill columns', 'Consume chunks in increasing rank order using the length of the destination column. Place each chunk top to bottom. Empty columns consume no symbols.');
+        step('Read the reconstructed rows', 'Read each row from left to right in the original column positions. Skip unoccupied final cells; keep every actual symbol.');
+      } else {
+        step('Place plaintext in rows', 'Fill the grid horizontally, left to right. Leave unused cells in the final row unoccupied.');
+        step('Read columns by rank', `Visit original columns ${result.order.map(column => column + 1).join(' → ')}. Read each top to bottom, skipping unoccupied cells.`);
+        step('Join the column contributions', result.trace.map(column => `${column.label} (column ${column.column}, rank ${column.rank}): ${preview(column.chunk) || '(empty)'}`).join(' | '));
+      }
+      let offset = 0;
+      solution.table = {
+        caption: decrypt ? 'Ciphertext chunks assigned in key order' : 'Column contributions to ciphertext',
+        columns: ['Rank', 'Original column', keyword ? 'Key letter' : 'Label', 'Length', 'Ciphertext positions', 'Chunk'],
+        rows: result.trace.map(column => {
+          const start = offset + 1; offset += column.length;
+          return [column.rank, column.column, column.label, column.length, column.length ? `${start}–${offset}` : '(none)', column.chunk || '(empty)'];
+        }),
+      };
+      solution.grid = {
+        caption: 'Original grid — dashes are unoccupied cells, not padding',
+        columns: ranks.map((rank, index) => `${keyword ? keyword[index] : index + 1} (rank ${rank})`),
+        rows: result.grid.map(row => row.map(symbol => symbol === null ? '—' : symbol)),
+      };
+      solution.notes.push(result.normalization, 'Substitution replaces symbols; transposition changes only their positions. Keep the same method and key when reversing the operation.');
+      finish();
+    }
+    if (kind === 'transposition' && !result.method) {
       const permutation = result.permutation;
       solution.formula = decrypt ? 'For each encryption arrow source → destination, move destination → source.' : 'C[destination] = P[source] inside each 8-symbol block.';
       solution.legend = 'Position 1 is the rightmost symbol: label positions 8 7 6 5 4 3 2 1 from left to right. The key lists destinations for source positions 1 through 8.';

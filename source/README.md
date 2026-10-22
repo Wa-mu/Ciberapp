@@ -5,7 +5,7 @@ beside it. The app works offline without installation.
 
 The source is **`_IM_INTE-401-IASv2026 (1).pdf`**, the supplied 162-page instructional
 material. References use its PDF pages. All seven units are covered, with 27
-lessons, 160 quiz cards, 226 mock questions and 76 recall cards. The PDF remains
+lessons, 160 quiz cards, 232 mock questions and 80 recall cards. The PDF remains
 local and is not redistributed.
 
 ## Files
@@ -13,7 +13,8 @@ local and is not redistributed.
 - `reviewer.js`: canonical filename, seven-unit/14-topic maps, security lessons,
   extra mock questions and recall cards. The legacy filename is retained; the
   data now cites the supplied instructional material.
-- `app.js`: cipher algorithms, cryptography lessons, simulator, missions,
+- `app.js`: cipher algorithms, cryptography lessons, simulator and interactive
+  columnar visualization, missions,
   combined mock bank, navigation and saved progress.
 - `solutions.js`: worked steps and source notes shared by the simulator, missions
   and written exam.
@@ -25,7 +26,22 @@ local and is not redistributed.
 
 ## Conventions
 
-Transposition uses PDF p. 107’s permutation. Destinations for sources 1–8 are
+Transposition has numeric and keyword columnar methods as BONUS practice, plus
+the existing course permutation. Columnar methods share `columnarCipher(input,
+key, decrypt)`: a numeric key gives the column count, while a letter keyword
+determines stable alphabetical order. `simulate('transposition', input, key,
+mode, {method:'numeric', columns:3})` and `{method:'keyword'}` select these methods.
+Omitting `method` or choosing `permutation` preserves the legacy API and the
+four-cipher exam. No duplicate cipher entry or lesson is added.
+
+Columnar input uppercases A–Z and removes whitespace with a visible explanation;
+it retains punctuation, digits and other symbols. No padding is added. Unequal
+column lengths follow original left-to-right positions before ranked readout.
+`HELLOWORLD` / `ZEBRA` → `ODLREOLLHW`; `CATDOG` / 3 → `CDAOTG`. Both operations
+reverse to the normalized original. Next Step, Previous Step and Reset control
+the grid; static worked explanations remain shared with missions and guides.
+
+The course method uses PDF p. 107’s permutation. Destinations for sources 1–8 are
 `4 8 1 5 7 2 6 3`. Number right to left: position 1 is at the right. The source
 states this for binary data; letter exercises explicitly use the same numbering.
 `ABCDEFGH` encrypts to `GDBEHACF`; `01000011` encrypts to `10101000`. Reverse the

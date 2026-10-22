@@ -75,9 +75,9 @@ test('mixed mock exams cover all seven PDF units and reuse the sourced card answ
     const units = plain(read('S.exam.items.map(item=>CipherLabReviewer.topics.find(topic=>topic.id===item.topic).unit)'));
     assert.equal(new Set(units).size, 7);
   }
-  assert.equal(read('Q.length'), 226);
+  assert.equal(read('Q.length'), 232);
   assert.equal(read('lessons.length'), 27);
-  assert.equal(read('flashcards.length'), 76);
+  assert.equal(read('flashcards.length'), 80);
   assert.equal(read('CipherLabReviewer.units.length'), 7);
   assert.ok(read("CipherLabStudyBank.cards.every(card=>Q.some(item=>item.q===card.question&&item.a[item.c]===card.choices[card.answer]&&item.source===card.source&&item.tag===(card.added?'BONUS':'CORE')))"));
   assert.ok(read("[...lessons,...Q].every(item=>item.source.includes(CipherLabReviewer.filename))"));

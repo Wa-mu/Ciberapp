@@ -899,6 +899,148 @@ textarea.field {
   grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
   align-items: start;
 }
+.columnar-visual,
+.columnar-visual > *,
+.simulator-layout > * {
+  min-width: 0;
+}
+.columnar-explanation {
+  min-height: 160px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  background: var(--panel2);
+}
+.columnar-explanation h4 {
+  margin: 10px 0 6px;
+  font-size: 16px;
+}
+.columnar-explanation p {
+  margin: 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.columnar-input {
+  font-size: 12px;
+  margin: 0 0 16px;
+}
+.columnar-input > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+  margin: 8px 0;
+}
+.columnar-input dt {
+  color: var(--muted);
+}
+.columnar-input dd {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: var(--font-mono);
+}
+.columnar-grid-wrap {
+  max-height: 440px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.columnar-grid {
+  width: 100%;
+  border-spacing: 4px;
+  table-layout: auto;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+.columnar-grid caption {
+  padding: 10px;
+  font-family: var(--font-sans);
+  color: var(--muted);
+  font-size: 12px;
+  text-align: left;
+}
+.columnar-grid th,
+.columnar-grid td {
+  min-width: 60px;
+  height: 42px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel2);
+  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+.columnar-grid th small {
+  display: block;
+  font: 10px var(--font-sans);
+  white-space: nowrap;
+  margin-top: 4px;
+  color: var(--muted);
+}
+.columnar-grid .is-pending {
+  background: var(--input);
+}
+.columnar-grid .is-empty {
+  border-style: dashed;
+  color: var(--dim);
+}
+.columnar-grid .is-complete,
+.columnar-chunks .is-complete {
+  background: var(--primary-dark);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.columnar-grid .is-active,
+.columnar-chunks .is-active {
+  background: var(--soft);
+  color: var(--secondary);
+  box-shadow: inset 0 0 0 2px var(--secondary);
+}
+.columnar-grid .is-reading td:not(.is-empty) {
+  border-bottom: 3px solid var(--secondary);
+}
+.columnar-grid .is-new {
+  animation: columnar-place 0.25s ease-out;
+}
+@keyframes columnar-place {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.columnar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+.columnar-chunks {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+}
+.columnar-chunks li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+.columnar-chunks li > span {
+  flex: 1 1 auto;
+}
+.columnar-chunks code {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.columnar-output {
+  min-height: 54px;
+}
+.field[aria-invalid="true"] {
+  border-color: var(--danger);
+}
 .cipher-explanation-trigger {
   margin-bottom: 18px;
 }
